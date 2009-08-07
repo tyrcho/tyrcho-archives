@@ -106,13 +106,13 @@ public class ObjectMapper<T, K> implements I_ObjectMapper<T, K>,
 	 */
 	public ObjectMapper(Class<T> runtimeClass, K[] columns, String[] fieldNames)
 	{
-		this(runtimeClass, Maps.arraysAsMap(columns, fieldNames));
+		this(runtimeClass, Maps.asMap(columns, fieldNames));
 	}
 
 	public ObjectMapper(Class<T> runtimeClass, K[] columns,
 			String[] fieldNames, ObjectMapper<? super T, K> parentMapper)
 	{
-		this(runtimeClass, Maps.arraysAsMap(columns, fieldNames), parentMapper);
+		this(runtimeClass, Maps.asMap(columns, fieldNames), parentMapper);
 	}
 
 	public Map<K, Object> toMap(T o)
