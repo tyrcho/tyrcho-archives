@@ -1,5 +1,7 @@
 package com.tyrcho.introspection;
 
+import static com.tyrcho.StringUtils.LINE_SEPARATOR;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -10,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 /**
  * Allows to introspects an object and generate a representation of all its
  * fields recursively.
@@ -21,7 +22,11 @@ import java.util.Map.Entry;
 public class Introspector
 {
 	private Map<Object,String> objects = new HashMap<Object, String>();
-
+	
+	public static String toString(Object o) {
+		return new Introspector().objectToString(o);
+	}
+	
 	private static void indent(String message, int deep, StringBuffer buffer)
 	{
 		for (int i = 0; i < deep; i++)
@@ -35,13 +40,13 @@ public class Introspector
 			throws IllegalArgumentException, IntrospectorException
 	{
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("\r");
-		// indent(defaultToString(collection)+"\r", deep, buffer);
-		indent("[\r", deep, buffer);
+		buffer.append(LINE_SEPARATOR);
+		// indent(defaultToString(collection)+LINE_SEPARATOR, deep, buffer);
+		indent("["+LINE_SEPARATOR, deep, buffer);
 		for (Iterator i = collection.iterator(); i.hasNext();)
 		{
 			indent(objectToString(i.next(), deep + 1), deep, buffer);
-			buffer.append("\r");
+			buffer.append(LINE_SEPARATOR);
 		}
 		indent("]", deep, buffer);
 		return buffer.toString();
@@ -51,12 +56,12 @@ public class Introspector
 			throws IllegalArgumentException, IntrospectorException
 	{
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("\r");
-		indent("[\r", deep, buffer);
+		buffer.append(LINE_SEPARATOR);
+		indent("["+LINE_SEPARATOR, deep, buffer);
 		for (int i = 0; i < array.length; i++)
 		{
 			indent(objectToString(array[i], deep + 1), deep, buffer);
-			buffer.append("\r");
+			buffer.append(LINE_SEPARATOR);
 		}
 		indent("]", deep, buffer);
 		return buffer.toString();
@@ -68,9 +73,9 @@ public class Introspector
 	{
 		List<Field> fields = new LinkedList<Field>();
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("\r");
-		indent(defaultToString(o) + "\r", deep, buffer);
-		indent("(\r", deep, buffer);
+		buffer.append(LINE_SEPARATOR);
+		indent(defaultToString(o) + LINE_SEPARATOR, deep, buffer);
+		indent("("+LINE_SEPARATOR, deep, buffer);
 		for (Class clazz = o.getClass(); clazz != null; clazz = clazz
 				.getSuperclass())
 		{
@@ -88,9 +93,9 @@ public class Introspector
 			Object value = field.get(o);
 			indent(fieldName + "=" + objectToString(value, deep + 1), deep + 1,
 					buffer);
-			buffer.append("\r");
+			buffer.append(LINE_SEPARATOR);
 		}
-		indent(")\r", deep, buffer);
+		indent(")"+LINE_SEPARATOR, deep, buffer);
 		return buffer.toString();
 	}
 
@@ -164,14 +169,14 @@ public class Introspector
 	throws IllegalArgumentException, IntrospectorException
 	{
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("\r");
-		indent("[\r", deep, buffer);
+		buffer.append(LINE_SEPARATOR);
+		indent("["+LINE_SEPARATOR, deep, buffer);
 		for (Entry entry:map.entrySet())
 		{
 			indent(objectToString(entry.getKey(), deep + 1), deep, buffer);
 			buffer.append("=");
 			indent(objectToString(entry.getValue(), deep + 1), deep, buffer);
-			buffer.append("\r");
+			buffer.append(LINE_SEPARATOR);
 		}
 		indent("]", deep, buffer);
 		return buffer.toString();

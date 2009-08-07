@@ -1,0 +1,6 @@
+
+test.com.tyrcho.introspection.IntrospectorTest$Simple@hash1
+(
+  privateString=pp
+  publicInt=12
+)
