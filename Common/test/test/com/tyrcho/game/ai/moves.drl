@@ -1,0 +1,20 @@
+package tests.com.tyrcho.game.ai;
+
+import tests.com.tyrcho.game.ai.Position;
+import tests.com.tyrcho.game.ai.Case;
+import tests.com.tyrcho.game.ai.Col;
+import tests.com.tyrcho.game.ai.Row;
+import tests.com.tyrcho.game.ai.Player;
+import tests.com.tyrcho.game.ai.Move;
+ 
+ 
+rule "Moves List" no-loop 
+	when
+		p:Position()
+		c:Case(this memberOf p.getCases().keySet())
+		not(exists Move( c ==c))
+	then
+		Move m=new Move(c,p.getLastPlayed().opposite());
+		insertLogical(m);
+		
+end

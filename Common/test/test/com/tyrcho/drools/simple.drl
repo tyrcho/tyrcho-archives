@@ -1,0 +1,11 @@
+package com.sample
+ 
+ 
+rule "Hello World" no-loop 
+	when
+		String()
+	then
+		insertLogical("hello, world!");
+		System.out.println("hello, world");
+		
+end
