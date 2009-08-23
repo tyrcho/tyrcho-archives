@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:bye xsi:schemaLocation="urn:tyrcho.com:hello HelloService_schema1.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="urn:tyrcho.com:hello">
+	<arg0>tyrcho</arg0>
+</tns:bye>
