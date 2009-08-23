@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="person" type="person" />
+
+	<xs:complexType name="person">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="address" type="address" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="address">
+		<xs:sequence>
+			<xs:element name="street" type="xs:string" />
+			<xs:element name="typeOfStreet" type="streetType" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="streetType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="rue" />
+			<xs:enumeration value="avenue" />
+			<xs:enumeration value="boulevard" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
+
