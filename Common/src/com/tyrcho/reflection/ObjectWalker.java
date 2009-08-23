@@ -1,12 +1,9 @@
 package com.tyrcho.reflection;
 
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import com.tyrcho.structure.func.Action;
 
@@ -49,7 +46,6 @@ public class ObjectWalker {
 	private static boolean isSimpleObject(Object current) {
 		return current == null || current instanceof Boolean
 				|| current instanceof Character || current instanceof Number
-				|| current instanceof Double || current instanceof Byte
 				|| current instanceof String;
 
 	}

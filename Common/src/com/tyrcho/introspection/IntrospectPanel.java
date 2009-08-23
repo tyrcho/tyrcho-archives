@@ -10,6 +10,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import javax.swing.JFrame;
@@ -21,6 +22,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import javax.xml.bind.JAXBContext;
 
 
 /********************************************************************************
@@ -517,5 +519,7 @@ public class IntrospectPanel extends JFrame
 		val.setAccessible(true);
 		val.setBoolean(ref,Boolean.valueOf(value).booleanValue());
 	}
+	
+	
 	
 }

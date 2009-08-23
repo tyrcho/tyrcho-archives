@@ -3,6 +3,7 @@ package com.tyrcho.reflection;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +80,7 @@ public final class Reflection {
 	 */
 	public static Map<String, Object> getAllFieldValues(Object o) {
 		if (o != null) {
-			HashMap<String, Object> values = new HashMap<String, Object>();
+			Map<String, Object> values = new LinkedHashMap<String, Object>();
 			List<Field> fields = getFields(o.getClass());
 			for (Field field : fields) {
 				field.setAccessible(true);

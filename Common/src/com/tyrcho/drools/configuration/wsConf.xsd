@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="webserviceConfiguration" type="webserviceConfiguration"/>
+
+  <xs:complexType name="webserviceConfiguration">
+    <xs:sequence>
+      <xs:element name="endpointURL" type="xs:string"/>
+      <xs:element name="droolsConfiguration" type="droolsConfiguration"/>
+      <xs:element name="conversionConfiguration" type="conversionConfiguration"/>
+      <xs:element name="WebserviceImplementationClass" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="droolsConfiguration">
+    <xs:sequence>
+      <xs:element name="errorHandlerClass" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="droolFile" type="droolsFileConfiguration" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="droolsFileConfiguration">
+    <xs:sequence/>
+    <xs:attribute name="fileName" type="xs:string" use="required"/>
+    <xs:attribute name="resourceType" type="droolsResourceType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="conversionConfiguration">
+    <xs:sequence>
+      <xs:element name="queryConverterClass" type="xs:string"/>
+      <xs:element name="answerConverterClass" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="droolsResourceType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DRL"/>
+      <xs:enumeration value="XDRL"/>
+      <xs:enumeration value="DSL"/>
+      <xs:enumeration value="DSLR"/>
+      <xs:enumeration value="DRF"/>
+      <xs:enumeration value="DTABLE"/>
+      <xs:enumeration value="PKG"/>
+      <xs:enumeration value="BRL"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+
