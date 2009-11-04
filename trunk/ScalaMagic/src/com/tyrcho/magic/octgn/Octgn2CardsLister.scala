@@ -9,7 +9,7 @@ object Octgn2CardsLister {
   def main(args : Array[String]) : Unit = {
     var inputFolder=new File(args(0))
     var outputFile=args(1)
-    XML.save(outputFile, getAllCards(inputFolder.listFiles))
+    XML.saveFull(outputFile, getAllCards(inputFolder.listFiles), true, null)
   }
   
   def getAllCards(files : Seq[File]) : Elem = {
