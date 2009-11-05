@@ -22,6 +22,7 @@ object Octgn2CardsLister {
     { files.map (f => getCardsFromSet(getXml(f))) }
     </sets>
   }
+
   
   /**
    * Converts the octgn xml format for a set.

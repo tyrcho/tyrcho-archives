@@ -14,16 +14,28 @@ object Otcgn2DeckImporter {
    */
   def main(args : Array[String]) : Unit = {
     val deckFile=new File(args(0))    
-    val cardsReference = XML.loadFile(args(1))
+    val cardsReference = buildDeckMap(XML.loadFile(args(1)))
     foreach(deckFile, convertDeck(cardsReference), f=>f.getName.endsWith(".mwDeck"))
   }
   
-
+  
+  /**
+   * Builds a map with card names as keys, ids as values, for faster access.
+   */
+  def buildDeckMap(reference : Elem) : Map[String, String]= {    
+    var map = Map.empty[String, String] 
+    for (card <- reference \\ "card") {
+      def name=card.attribute("name").get.text
+      def id=card.attribute("id").get.text
+      map += name -> id
+    }
+    map
+  }
   
   /**
    * Converts a deck file with regards to the XML reference.
    */
-  def convertDeck(cardsReference : Elem)(deckFile : File) : Unit = {
+  def convertDeck(cardsReference : Map[String, String])(deckFile : File) : Unit = {
     println(deckFile.getAbsolutePath)
     val reader = new BufferedReader(new FileReader(deckFile))
     val lines=getLines(reader)
@@ -77,33 +89,18 @@ object Otcgn2DeckImporter {
   }
   
   /**
-   * Gets the id for the card by searching the XML reference.
-   * Returns the id or None if not found.
-   */
-  def getId(card : String, cardsList : Elem) : Option[String] = {
-    val cards=cardsList \\ "card"
-    val firstCardWithSameName=cards.filter(c => c.attribute("name").get.text.equals(card)).firstOption
-    if(firstCardWithSameName.isDefined) {
-    	return Some(firstCardWithSameName.get.attribute("id").get.text)
-    } else {
-      println(card+" not found")
-      return None
-    }
-  }
-  
-  /**
    * Builds the card XML element from the card name.
    */
-  def getCard(card:String, count: Int, cardsList:Elem) : Elem = {
+  def getCard(card:String, count: Int, cardsList:Map[String, String]) : Elem = {
    <card 
      qty={count.toString} 
-     id={getId(card, cardsList).orElse(Some("")).get}>{card}</card>
+     id={cardsList.get(card).orElse({println(card+" not found"); Some("")}).get}>{card}</card>
   }
   
   /**
    * Builds the deck XML from the main and sideboard cards names and counts.
    */
-  def buildDeck(main:Seq[(String, Int)], side :Seq[(String, Int)], cardsList : Elem) : Elem = {
+  def buildDeck(main:Seq[(String, Int)], side :Seq[(String, Int)], cardsList : Map[String, String]) : Elem = {
     <deck game="a6c8d2e8-7cd8-11dd-8f94-e62b56d89593">
     	<section name="Main">
     	{
