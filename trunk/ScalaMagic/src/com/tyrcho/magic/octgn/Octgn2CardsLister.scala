@@ -14,7 +14,29 @@ object Octgn2CardsLister {
   def main(args : Array[String]) : Unit = {
     var inputFolder=new File(args(0))
     var outputFile=args(1)
-    XML.saveFull(outputFile, getAllCards(inputFolder.listFiles), true, null)
+    var sets=getAllCards(inputFolder.listFiles)
+    XML.saveFull(outputFile, sets, true, null)
+    zip(outputFile)
+  }
+  
+  def copyStream(istream : InputStream, ostream : OutputStream) : Unit = {
+    var bytes =  new Array[Byte](1024)
+    var len = -1
+    while({ len = istream.read(bytes, 0, 1024); len != -1 })
+      ostream.write(bytes, 0, len)
+  }
+  
+  
+  def zip(file : String) : Unit = {
+    val f = new File(file).getCanonicalPath
+    val localFileName=if(f.contains(File.separator)) f.substring(f.lastIndexOf(File.separator)).replace(File.separator, "") else f
+    val zos:ZipOutputStream = new ZipOutputStream(new BufferedOutputStream( new FileOutputStream(file+".zip")));
+    def fis:FileInputStream = new FileInputStream(file);
+    zos.putNextEntry(new ZipEntry(localFileName));
+	copyStream(fis, zos)
+    zos.closeEntry
+    fis.close
+    zos.close
   }
   
   def getAllCards(files : Seq[File]) : Elem = {
