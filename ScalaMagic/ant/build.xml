@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<project name="ScalaMagic" default="jar" basedir="..">
+	<property name="build.dir" value="bin" />
+
+
+
+
+	
+
+
+	<!-- =================================================================== -->
+	<!-- Builds the jar file                                                 -->
+	<!-- =================================================================== -->
+	<target name="jar" description="Builds the jar file">
+		<jar destfile="batch/mws2octgn.jar">
+			<fileset dir="${build.dir}" />
+		</jar>
+	</target>
+
+
+	<target name="ftp" depends="jar" description="copies to tyrcho.com">
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="${ftp.remote}">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</ftp>
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="${ftp.remote}">
+			<fileset file="${common.tools.jar}" />
+		</ftp>
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="${ftp.remote}">
+			<fileset dir=".">
+				<include name="dict.jnlp" />
+			</fileset>
+		</ftp>
+	</target>
+	
+
+</project>
