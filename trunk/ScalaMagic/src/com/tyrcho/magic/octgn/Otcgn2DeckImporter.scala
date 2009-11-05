@@ -6,12 +6,25 @@ import java.util.regex.Pattern
 
 object Otcgn2DeckImporter {
   def main(args : Array[String]) : Unit = {
-    val deckFile=new File(args(0))
+    val deckFile=new File(args(0))    
     val cardsReference = XML.loadFile(args(1))
+    foreach(deckFile, convertDeck(cardsReference), f=>f.getName.endsWith(".mwDeck"))
+  }
+  
+  def convertDeck(cardsReference : Elem)(deckFile : File) : Unit = {
+    println(deckFile.getAbsolutePath)
     val reader = new BufferedReader(new FileReader(deckFile))
     val lines=getLines(reader)
     val deck= buildDeck(getCards(lines,mainPattern), getCards(lines,sidePattern), cardsReference)
-    XML.saveFull(deckFile+".o8d", deck, true, null)
+    XML.saveFull(deckFile.getAbsolutePath+".o8d", deck, true, null)
+  }
+  
+  def foreach(file : File, action : File=>Unit, filter : File => boolean) : Unit = {
+    if(file.isDirectory) {
+      for(f <- file.listFiles) { foreach(f, action, filter)};
+    } else {
+      if (filter(file)) { action(file)}
+    }
   }
   
   val mainPattern = Pattern.compile("\\s*(\\d) \\[(\\S+)\\] (.*)")
@@ -37,17 +50,21 @@ object Otcgn2DeckImporter {
     }    
   }
   
-  def getId(card : String, cardsList : Elem) : String = {
-    println(card)
+  def getId(card : String, cardsList : Elem) : Option[String] = {
     val cards=cardsList \\ "card"
-    val firstCardWithSameName=cards.filter(c => c.attribute("name").get.text.equals(card)).first
-    return firstCardWithSameName.attribute("id").get.text
+    val firstCardWithSameName=cards.filter(c => c.attribute("name").get.text.equals(card)).firstOption
+    if(firstCardWithSameName.isDefined) {
+    	return Some(firstCardWithSameName.get.attribute("id").get.text)
+    } else {
+      println(card+" not found")
+      return None
+    }
   }
   
   def getCard(card:String, count: Int, cardsList:Elem) : Elem = {
    <card 
      qty={count.toString} 
-     id={getId(card, cardsList)}>{card}</card>
+     id={getId(card, cardsList).orElse(Some("")).get}>{card}</card>
   }
   
   def buildDeck(main:Seq[(String, Int)], side :Seq[(String, Int)], cardsList : Elem) : Elem = {
