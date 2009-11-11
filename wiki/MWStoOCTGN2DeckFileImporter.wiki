@@ -19,6 +19,5 @@ Contains data to import all sets up to Zendikar.
 = Bugs and missing features =
 
 Some cards have different wordings in MWS and OCTGN :
-
-* Does not import split cards such as Fire / Ice
-* Does not import flip cards from Kamigawa
+  * Does not import split cards such as Fire / Ice
+  * Does not import flip cards from Kamigawa
