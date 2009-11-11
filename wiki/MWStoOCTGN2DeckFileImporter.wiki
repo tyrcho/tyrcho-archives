@@ -3,7 +3,8 @@
 
 = Usage =
 
-Unzip the archive.
+[http://tyrcho.googlecode.com/files/OctgnImporter1.0.zip Download] and unzip the archive.
+
 Run convertAllMwDecks2Octgn.bat _folder_
 
 It will take all deck files in _folder_ (and its subfolders) and create a file with the same name compatible with OCTGN2.
