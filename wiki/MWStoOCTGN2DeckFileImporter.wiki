@@ -4,9 +4,9 @@
 = Usage =
 
 Unzip the archive.
-Run convertAllMwDecks2Octgn.bat <folder>
+Run convertAllMwDecks2Octgn.bat '<folder>'
 
-It will take all deck files in <folder> (or a subfolder) and create a file with the same name compatible with OCTGN2.
+It will take all deck files in '<folder>' (and its subfolders) and create a file with the same name compatible with OCTGN2.
 
 
 = Details =
