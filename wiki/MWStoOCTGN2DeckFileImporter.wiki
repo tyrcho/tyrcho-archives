@@ -1,4 +1,4 @@
-#summary Imports all your decks from Magic Workstation to [http://www.octgn.net/ OCTGN2] format
+#summary Imports all your decks from Magic Workstation to OCTGN2 format
 #labels Featured,Phase-Deploy
 
 = Usage =
@@ -21,3 +21,7 @@ Contains data to import all sets up to Zendikar.
 Some cards have different wordings in MWS and OCTGN :
   * Does not import split cards such as Fire / Ice
   * Does not import flip cards from Kamigawa
+
+= Links =
+  * [http://www.octgn.net/ OCTGN2] home page
+  * [http://www.scala-lang.org/ Scala] (the language I used with Java to do this program) home page
