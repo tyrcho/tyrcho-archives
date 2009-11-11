@@ -15,3 +15,10 @@ It will take all deck files in _folder_ (and its subfolders) and create a file w
 Requires a [http://www.java.com/fr/download/index.jsp JVM] to be installed on your computer.
 
 Contains data to import all sets up to Zendikar.
+
+= Bugs and missing features =
+
+Some cards have different wordings in MWS and OCTGN :
+
+* Does not import split cards such as Fire / Ice
+* Does not import flip cards from Kamigawa
