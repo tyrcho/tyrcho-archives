@@ -1,0 +1,16 @@
+#summary Imports all your decks from Magic Workstation to OCTGN2 format
+#labels Featured,Phase-Deploy
+
+= Usage =
+
+Unzip the archive.
+Run convertAllMwDecks2Octgn.bat <folder>
+
+It will take all deck files in <folder> (or a subfolder) and create a file with the same name compatible with OCTGN2.
+
+
+= Details =
+
+Requires a JVM to be installed on your computer.
+
+Contains data to import all sets up to Zendikar.
