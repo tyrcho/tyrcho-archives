@@ -1,4 +1,4 @@
-#summary Imports all your decks from Magic Workstation to OCTGN2 format
+#summary Imports all your decks from Magic Workstation to [http://www.octgn.net/ OCTGN2] format
 #labels Featured,Phase-Deploy
 
 = Usage =
@@ -12,6 +12,6 @@ It will take all deck files in _folder_ (and its subfolders) and create a file w
 
 = Details =
 
-Requires a JVM to be installed on your computer.
+Requires a [http://www.java.com/fr/download/index.jsp JVM] to be installed on your computer.
 
 Contains data to import all sets up to Zendikar.
