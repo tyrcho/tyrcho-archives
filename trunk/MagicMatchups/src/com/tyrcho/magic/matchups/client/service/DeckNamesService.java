@@ -1,4 +1,4 @@
-package com.tyrcho.magic.matchups.client;
+package com.tyrcho.magic.matchups.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
