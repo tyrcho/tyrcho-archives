@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.tyrcho.magic.matchups.client.editor.EditEventDialog;
 
 public class MenuBar extends HorizontalPanel{
 	public MenuBar() {
