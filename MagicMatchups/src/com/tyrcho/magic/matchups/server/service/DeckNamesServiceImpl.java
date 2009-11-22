@@ -7,7 +7,7 @@ import javax.jdo.PersistenceManager;
 
 import com.tyrcho.magic.matchups.client.service.DeckNamesService;
 import com.tyrcho.magic.matchups.server.Deck;
-import com.tyrcho.magic.matchups.server.PMF;
+import com.tyrcho.magic.matchups.server.dao.PMF;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

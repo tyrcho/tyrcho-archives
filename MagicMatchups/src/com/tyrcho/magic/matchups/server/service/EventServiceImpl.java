@@ -1,11 +1,11 @@
 package com.tyrcho.magic.matchups.server.service;
 
-import javax.jdo.PersistenceManager;
+import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.tyrcho.magic.matchups.client.model.Event;
 import com.tyrcho.magic.matchups.client.service.EventService;
-import com.tyrcho.magic.matchups.server.PMF;
+import com.tyrcho.magic.matchups.server.dao.DAOFactory;
 
 /**
  * The server side implementation of the RPC service.
@@ -16,12 +16,11 @@ public class EventServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void addEvent(Event event) {
-		PersistenceManager persistenceManager = PMF.get()
-				.getPersistenceManager();
-		try {
-			persistenceManager.makePersistent(event);
-		} finally {
-			persistenceManager.close();
-		}
+		DAOFactory.buildDAO(Event.class).makePersistant(event);
+	}
+
+	@Override
+	public List<Event> selectAll() {
+		return DAOFactory.buildDAO(Event.class).selectAll();
 	}
 }

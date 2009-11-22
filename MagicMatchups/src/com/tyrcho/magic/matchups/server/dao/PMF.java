@@ -1,4 +1,4 @@
-package com.tyrcho.magic.matchups.server;
+package com.tyrcho.magic.matchups.server.dao;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
