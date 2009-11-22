@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class MenuBar extends HorizontalPanel{
 	public MenuBar() {
-		Button editDeck = new Button("Edit Deck");
+		Button editDeck = new Button("Edit Event");
 		add(editDeck);
 		editDeck.addClickHandler(new ClickHandler() {
 			@Override

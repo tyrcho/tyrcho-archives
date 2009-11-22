@@ -12,6 +12,7 @@ import com.tyrcho.magic.matchups.client.model.EventLevel;
 
 public class EditEventDialog extends DialogBox {
 	public EditEventDialog() {
+		super(false, true);
 		setText("Edit deck");
 		VerticalPanel panel = new VerticalPanel();
 		DateBox date = new DateBox();
