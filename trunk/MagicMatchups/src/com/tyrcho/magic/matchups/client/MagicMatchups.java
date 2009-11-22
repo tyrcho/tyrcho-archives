@@ -1,6 +1,7 @@
 package com.tyrcho.magic.matchups.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -12,6 +13,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -36,18 +39,49 @@ public class MagicMatchups implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
+	private final DeckNamesServiceAsync deckNamesService = GWT
+			.create(DeckNamesService.class);
 
 	private FlexTable matchups = new FlexTable();
 	private List<String> decks = new ArrayList<String>();
 	private Button addDeck = new Button("Add");
+	private Button save = new Button("Save");
 	private TextBox deckName = new TextBox();
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		VerticalPanel verticalPanel = new VerticalPanel();
+		verticalPanel.add(new MenuBar());
+		verticalPanel.add(matchups);
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.add(deckName);
+		hPanel.add(addDeck);
+		verticalPanel.add(hPanel);
+		verticalPanel.add(save);
+		RootPanel.get().add(verticalPanel);
+		resetDeckName();
+		registerHandlers();
+		initDeckNames();
+	}
+
+	private void initDeckNames() {
+		deckNamesService.getDecks(new AsyncCallback<String[]>() {
+			@Override
+			public void onSuccess(String[] result) {
+				decks=Arrays.asList(result);
+			}
+		
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+		
+			}
+		});
+	}
+
+	private void registerHandlers() {
 		deckName.addKeyDownHandler(new KeyDownHandler() {
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
@@ -56,30 +90,32 @@ public class MagicMatchups implements EntryPoint {
 				}
 			}
 		});
-		matchups.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-
-			}
-		});
-		VerticalPanel verticalPanel = new VerticalPanel();
-		verticalPanel.add(matchups);
-		HorizontalPanel hPanel = new HorizontalPanel();
-		hPanel.add(deckName);
-		hPanel.add(addDeck);
-		verticalPanel.add(hPanel);
-		RootPanel.get().add(verticalPanel);
-
-		// Focus the cursor on the name field when the app loads
-		resetDeckName();
-
-		// Add a handler to close the DialogBox
 		addDeck.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				addDeck();
 			}
 		});
+		save.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				doSave();
+			}
+		});
+	}
 
+	protected void doSave() {		
+		deckNamesService.saveDecks(decks.toArray(new String[0]), new AsyncCallback<Void>() {
+		
+			@Override
+			public void onSuccess(Void result) {
+				Window.alert("OK");
+				}
+		
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+		});
 	}
 
 	private void resetDeckName() {
@@ -107,8 +143,9 @@ public class MagicMatchups implements EntryPoint {
 	private void setLabel(final String text, final int x, final int y) {
 		setLabel(text, text, x, y);
 	}
-	
-	private void setLabel(final String originalText, String currentText, final int x, final int y) {
+
+	private void setLabel(final String originalText, String currentText,
+			final int x, final int y) {
 		final Label l1 = new Label(currentText);
 		l1.addClickHandler(new ClickHandler() {
 			@Override
