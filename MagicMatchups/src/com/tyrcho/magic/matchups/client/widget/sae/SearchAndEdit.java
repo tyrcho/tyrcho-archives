@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -16,10 +17,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tyrcho.magic.matchups.client.callback.CallbackFactory;
 import com.tyrcho.magic.matchups.client.callback.SuccessCallback;
 
-public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
+public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 	private TextBox search = new TextBox();
 	private Button add = new Button("New");
 	private Button edit = new Button("Edit");
+	private Button delete = new Button("Delete");
 	private Button save = new Button("Save");
 	private Button cancel = new Button("Cancel");
 	private ListBox elements = new ListBox(true);
@@ -27,6 +29,7 @@ public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
 	private HorizontalPanel editorHeader = new HorizontalPanel();
 	private final SAEService<T> service;
 	private List<T> allData;
+	private boolean addMode;
 
 	public SearchAndEdit(SAEService<T> service, E editor) {
 		this.service = service;
@@ -41,6 +44,7 @@ public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
 				new SuccessCallback<List<T>>() {
 					@Override
 					public void onSuccess(List<T> result) {
+						elements.clear();
 						allData = result;
 						for (T t : allData) {
 							elements.addItem(t.toString());
@@ -50,10 +54,22 @@ public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
 	}
 
 	private void initListeners() {
+		add.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				doAdd();
+			}
+		});
 		edit.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				doEdit();
+			}
+		});
+		delete.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				doDelete();
 			}
 		});
 		save.addClickHandler(new ClickHandler() {
@@ -79,14 +95,16 @@ public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
 
 	protected void doCancel() {
 		showSelected();
-		setEditButtonVisible(true);
+		setReadOnlyMode(true);
 	}
 
-	private void setEditButtonVisible(boolean b) {
+	private void setReadOnlyMode(boolean b) {
 		if (b) {
 			editor.setEnabled(false);
 			editorHeader.clear();
+			setElementSelected(elements.getSelectedIndex() >= 0);
 			editorHeader.add(edit);
+			editorHeader.add(delete);
 		} else {
 			editor.setEnabled(true);
 			editorHeader.clear();
@@ -96,12 +114,35 @@ public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
 	}
 
 	protected void doSave() {
-		service.add(editor.getValue(), CallbackFactory.buildDefault("save"));
-		setEditButtonVisible(true);
+		SuccessCallback<Void> dataUpdated = new SuccessCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				dataUpdated();
+			}
+		};
+		if (addMode) {
+			service.add(editor.getValue(), CallbackFactory.buildDefault("add",
+					dataUpdated));
+		} else {
+			service.save(editor.getValue(), CallbackFactory.buildDefault(
+					"save", dataUpdated));
+		}
+	}
+
+	protected void doDelete() {
+		service.delete(editor.getValue(), CallbackFactory
+				.buildDefault("delete"));
+		dataUpdated();
 	}
 
 	protected void doEdit() {
-		setEditButtonVisible(false);
+		setReadOnlyMode(false);
+	}
+
+	protected void doAdd() {
+		editor.createEmpty();
+		addMode = true;
+		setReadOnlyMode(false);
 	}
 
 	private void initComponents() {
@@ -112,9 +153,9 @@ public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
 		HorizontalPanel center = new HorizontalPanel();
 		center.add(elements);
 		VerticalPanel editorPanel = new VerticalPanel();
-		editorHeader.add(edit);
+		setReadOnlyMode(true);
 		editorPanel.add(editorHeader);
-		editorPanel.add(editor);
+		editorPanel.add(editor.getWidget());
 		center.add(editorPanel);
 		add(center, DockPanel.CENTER);
 		editor.setEnabled(false);
@@ -122,6 +163,23 @@ public class SearchAndEdit<T, E extends Widget & Editor<T>> extends DockPanel {
 
 	protected void showSelected() {
 		int selectedIndex = elements.getSelectedIndex();
-		editor.setValue(allData.get(selectedIndex));
+		boolean hasSelection = selectedIndex >= 0;
+		if (hasSelection) {
+			editor.setValue(allData.get(selectedIndex));
+		} else {
+			editor.clear();
+		}
+		setElementSelected(hasSelection);
+	}
+
+	private void setElementSelected(boolean selected) {
+		edit.setEnabled(selected);
+		delete.setEnabled(selected);
+	}
+
+	private void dataUpdated() {
+		initData();
+		addMode = false;
+		setReadOnlyMode(true);
 	}
 }

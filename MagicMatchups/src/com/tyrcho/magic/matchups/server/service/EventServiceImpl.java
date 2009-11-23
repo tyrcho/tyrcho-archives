@@ -23,4 +23,15 @@ public class EventServiceImpl extends RemoteServiceServlet implements
 	public List<Event> selectAll() {
 		return DAOFactory.buildDAO(Event.class).selectAll();
 	}
+
+	@Override
+	public void save(Event event) {
+		DAOFactory.buildDAO(Event.class).update(event);
+		
+	}
+
+	@Override
+	public void delete(Event event) {
+		DAOFactory.buildDAO(Event.class).delete(event);
+	}
 }

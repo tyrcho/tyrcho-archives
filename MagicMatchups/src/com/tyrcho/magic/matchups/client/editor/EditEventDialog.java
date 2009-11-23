@@ -31,7 +31,7 @@ public class EditEventDialog extends DialogBox {
 			}
 		});
 		eventEditor = new EventEditPanel();
-		panel.add(eventEditor);
+		panel.add(eventEditor.getWidget());
 		panel.add(close);
 		setWidget(panel);
 	}

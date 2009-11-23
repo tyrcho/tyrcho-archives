@@ -11,6 +11,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface SAEService<T> {
 	void add(T data, AsyncCallback<Void> callback);
+	void save(T data, AsyncCallback<Void> callback);
+	void delete(T data, AsyncCallback<Void> callback);
 
 	void selectAll(AsyncCallback<List<T>> callback);
 
