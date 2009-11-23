@@ -43,6 +43,12 @@ public class GridEditors extends Grid {
 		return editors.get(key).getValue();
 	}
 
+	public void clear() {
+		for (Object editor : editors.values()) {
+			((HasValue<Object>) editor).setValue(null);
+		}
+	}
+	
 	public void setValue(String key, Object value) {
 		((HasValue<Object>) editors.get(key)).setValue(value);
 	}

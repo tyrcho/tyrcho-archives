@@ -13,44 +13,60 @@ import com.tyrcho.magic.matchups.client.model.Event;
 import com.tyrcho.magic.matchups.client.model.EventLevel;
 import com.tyrcho.magic.matchups.client.widget.GridEditors;
 import com.tyrcho.magic.matchups.client.widget.RadioButtonGroup;
-import com.tyrcho.magic.matchups.client.widget.sae.Editor;
+import com.tyrcho.magic.matchups.client.widget.sae.AbstractEditor;
 
-public class EventEditPanel extends GridEditors implements Editor<Event> {
+public class EventEditPanel extends
+		AbstractEditor<Event, EventEditPanel.EventEditPanelWidget> {
+	public EventEditPanel() {
+		super(EventEditPanelWidget.class, Event.class);
+	}
+
 	private static final String LABEL_DATE = "Date";
 	private static final String LABEL_NAME = "Name";
 	private static final String LABEL_LEVEL = "Level";
 
-	public EventEditPanel() {
-		super(buildEditors());
-	}
+	public static class EventEditPanelWidget extends GridEditors {
+		public EventEditPanelWidget() {
+			super(buildEditors());
+		}
 
-	private static Map<String, HasValue<?>> buildEditors() {
-		LinkedHashMap<String, HasValue<?>> map = new LinkedHashMap<String, HasValue<?>>();
-		map.put(LABEL_DATE,
-				new DateBox(new DatePicker(), null, new DateBox.DefaultFormat(
-						DateTimeFormat.getFormat("dd/MM/yy"))));
-		map.put(LABEL_NAME, new TextBox());
-		map.put(LABEL_LEVEL, new RadioButtonGroup<EventLevel>(LABEL_LEVEL,
-				EventLevel.values()));
-		return map;
-	}
-
-	@Override
-	public Event getValue() {
-		Event event = new Event();
-		event.setDate((Date) getValue(LABEL_DATE));
-		event.setLevel((EventLevel) getValue(LABEL_LEVEL));
-		event.setName((String) getValue(LABEL_NAME));
-		return event;
+		private static Map<String, HasValue<?>> buildEditors() {
+			LinkedHashMap<String, HasValue<?>> map = new LinkedHashMap<String, HasValue<?>>();
+			map.put(LABEL_DATE, new DateBox(new DatePicker(), null,
+					new DateBox.DefaultFormat(DateTimeFormat
+							.getFormat("dd/MM/yy"))));
+			map.put(LABEL_NAME, new TextBox());
+			map.put(LABEL_LEVEL, new RadioButtonGroup<EventLevel>(LABEL_LEVEL,
+					EventLevel.values()));
+			return map;
+		}
 	}
 
 	@Override
-	public void setValue(Event value) {
-		setValue(LABEL_DATE, value.getDate());
-		setValue(LABEL_LEVEL, value.getLevel());
-		setValue(LABEL_NAME, value.getName());
+	protected void updateFields() {
+		getWidget().setValue(LABEL_DATE, getData().getDate());
+		getWidget().setValue(LABEL_LEVEL, getData().getLevel());
+		getWidget().setValue(LABEL_NAME, getData().getName());
 	}
 
-	
+	@Override
+	protected void updateValue() {
+		getData().setDate((Date) getWidget().getValue(LABEL_DATE));
+		getData().setLevel((EventLevel) getWidget().getValue(LABEL_LEVEL));
+		getData().setName((String) getWidget().getValue(LABEL_NAME));
+
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		getWidget().setEnabled(enabled);
+	}
+
+	@Override
+	public void clear() {
+		getWidget().clear();
+		
+	}
+
 
 }
