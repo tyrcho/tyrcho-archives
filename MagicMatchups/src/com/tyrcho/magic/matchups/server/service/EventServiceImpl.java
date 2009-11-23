@@ -15,7 +15,7 @@ public class EventServiceImpl extends RemoteServiceServlet implements
 		EventService {
 
 	@Override
-	public void addEvent(Event event) {
+	public void add(Event event) {
 		DAOFactory.buildDAO(Event.class).makePersistant(event);
 	}
 

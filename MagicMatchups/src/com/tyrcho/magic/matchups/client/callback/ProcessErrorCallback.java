@@ -1,5 +1,6 @@
 package com.tyrcho.magic.matchups.client.callback;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -7,19 +8,26 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * A callback handler which only alerts in case of errors.
  * 
  * @author mdaviot
- *
+ * 
  */
-public class ProcessErrorCallback implements AsyncCallback<Void>{
+public class ProcessErrorCallback<T> implements AsyncCallback<T> {
 
-	@Override
-	public void onFailure(Throwable caught) {
-		Window.alert(caught.getMessage());
-		caught.printStackTrace();
+	private final SuccessCallback<? super T> successCallback;
+
+	public ProcessErrorCallback(SuccessCallback<? super T> successCallback) {
+		this.successCallback = successCallback;
 	}
 
 	@Override
-	public void onSuccess(Void result) {
-		//do nothing
+	public void onFailure(Throwable caught) {
+		String message = caught.getMessage();
+		Window.alert(message);
+		GWT.log(message, caught);
+	}
+
+	@Override
+	public void onSuccess(T result) {
+		successCallback.onSuccess(result);
 	}
 
 }

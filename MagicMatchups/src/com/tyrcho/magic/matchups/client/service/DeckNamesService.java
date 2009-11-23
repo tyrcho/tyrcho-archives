@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * The client side stub for the RPC service.
  */
-@RemoteServiceRelativePath("deckNames")
+@RemoteServiceRelativePath("service/deckNames")
 public interface DeckNamesService extends RemoteService {
 	void saveDecks(String[] names);
 	
