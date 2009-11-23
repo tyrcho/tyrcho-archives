@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,26 +21,28 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.tyrcho.magic.matchups.client.callback.CallbackFactory;
+import com.tyrcho.magic.matchups.client.callback.SuccessCallback;
+import com.tyrcho.magic.matchups.client.editor.EventEditPanel;
+import com.tyrcho.magic.matchups.client.editor.EventsList;
+import com.tyrcho.magic.matchups.client.model.Event;
 import com.tyrcho.magic.matchups.client.service.DeckNamesService;
 import com.tyrcho.magic.matchups.client.service.DeckNamesServiceAsync;
+import com.tyrcho.magic.matchups.client.service.EventService;
+import com.tyrcho.magic.matchups.client.service.ServiceFactory;
+import com.tyrcho.magic.matchups.client.widget.sae.SAEService;
+import com.tyrcho.magic.matchups.client.widget.sae.SearchAndEdit;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class MagicMatchups implements EntryPoint {
-	/**
-	 * The message displayed to the user when the server cannot be reached or
-	 * returns an error.
-	 */
-	private static final String SERVER_ERROR = "An error occurred while "
-			+ "attempting to contact the server. Please check your network "
-			+ "connection and try again.";
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final DeckNamesServiceAsync deckNamesService = GWT
+	private final DeckNamesServiceAsync deckNamesService = ServiceFactory
 			.create(DeckNamesService.class);
 
 	private FlexTable matchups = new FlexTable();
@@ -49,6 +50,7 @@ public class MagicMatchups implements EntryPoint {
 	private Button addDeck = new Button("Add");
 	private Button save = new Button("Save");
 	private TextBox deckName = new TextBox();
+	private EventsList eventsList = new EventsList();
 
 	/**
 	 * This is the entry point method.
@@ -58,10 +60,13 @@ public class MagicMatchups implements EntryPoint {
 		verticalPanel.add(new MenuBar());
 		verticalPanel.add(matchups);
 		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.add(eventsList);
 		hPanel.add(deckName);
 		hPanel.add(addDeck);
 		verticalPanel.add(hPanel);
 		verticalPanel.add(save);
+		SAEService<Event> eventService = ServiceFactory.create(EventService.class);
+		verticalPanel.add(new SearchAndEdit<Event, EventEditPanel>(eventService, new EventEditPanel()));
 		RootPanel.get().add(verticalPanel);
 		resetDeckName();
 		registerHandlers();
@@ -69,18 +74,13 @@ public class MagicMatchups implements EntryPoint {
 	}
 
 	private void initDeckNames() {
-		deckNamesService.getDecks(new AsyncCallback<String[]>() {
-			@Override
-			public void onSuccess(String[] result) {
-				decks=Arrays.asList(result);
-			}
-		
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-		
-			}
-		});
+		deckNamesService.getDecks(CallbackFactory.buildDefault(
+				"list deck names", new SuccessCallback<String[]>() {
+					@Override
+					public void onSuccess(String[] result) {
+						decks = Arrays.asList(result);
+					}
+				}));
 	}
 
 	private void registerHandlers() {
@@ -105,19 +105,20 @@ public class MagicMatchups implements EntryPoint {
 		});
 	}
 
-	protected void doSave() {		
-		deckNamesService.saveDecks(decks.toArray(new String[0]), new AsyncCallback<Void>() {
-		
-			@Override
-			public void onSuccess(Void result) {
-				Window.alert("OK");
-				}
-		
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-		});
+	protected void doSave() {
+		deckNamesService.saveDecks(decks.toArray(new String[0]),
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+						Window.alert("OK");
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+				});
 	}
 
 	private void resetDeckName() {

@@ -4,17 +4,18 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.google.gwt.user.datepicker.client.DatePicker;
 import com.tyrcho.magic.matchups.client.model.Event;
 import com.tyrcho.magic.matchups.client.model.EventLevel;
 import com.tyrcho.magic.matchups.client.widget.GridEditors;
 import com.tyrcho.magic.matchups.client.widget.RadioButtonGroup;
+import com.tyrcho.magic.matchups.client.widget.sae.Editor;
 
-public class EventEditPanel extends GridEditors implements HasValue<Event>{
+public class EventEditPanel extends GridEditors implements Editor<Event> {
 	private static final String LABEL_DATE = "Date";
 	private static final String LABEL_NAME = "Name";
 	private static final String LABEL_LEVEL = "Level";
@@ -25,10 +26,12 @@ public class EventEditPanel extends GridEditors implements HasValue<Event>{
 
 	private static Map<String, HasValue<?>> buildEditors() {
 		LinkedHashMap<String, HasValue<?>> map = new LinkedHashMap<String, HasValue<?>>();
-		map.put(LABEL_DATE, new DateBox());
+		map.put(LABEL_DATE,
+				new DateBox(new DatePicker(), null, new DateBox.DefaultFormat(
+						DateTimeFormat.getFormat("dd/MM/yy"))));
 		map.put(LABEL_NAME, new TextBox());
-		map.put(LABEL_LEVEL, new RadioButtonGroup<EventLevel>(LABEL_LEVEL, EventLevel
-				.values()));
+		map.put(LABEL_LEVEL, new RadioButtonGroup<EventLevel>(LABEL_LEVEL,
+				EventLevel.values()));
 		return map;
 	}
 
@@ -43,20 +46,11 @@ public class EventEditPanel extends GridEditors implements HasValue<Event>{
 
 	@Override
 	public void setValue(Event value) {
-		// TODO Auto-generated method stub
-		
+		setValue(LABEL_DATE, value.getDate());
+		setValue(LABEL_LEVEL, value.getLevel());
+		setValue(LABEL_NAME, value.getName());
 	}
 
-	@Override
-	public void setValue(Event value, boolean fireEvents) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
-	@Override
-	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<Event> handler) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

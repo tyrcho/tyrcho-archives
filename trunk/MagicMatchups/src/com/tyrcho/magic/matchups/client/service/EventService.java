@@ -11,7 +11,7 @@ import com.tyrcho.magic.matchups.client.model.Event;
  */
 @RemoteServiceRelativePath("service/event")
 public interface EventService extends RemoteService {
-	void addEvent(Event event);
+	void add(Event event);
 	
 	List<Event> selectAll();
 }

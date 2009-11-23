@@ -1,5 +1,6 @@
 package com.tyrcho.magic.matchups.server.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -25,7 +26,8 @@ public class SimpleDAO<T> {
 	public List<T> selectAll() {
 		PersistenceManager persistenceManager = PMF.get().getPersistenceManager();
 		try{
-			return (List<T>) persistenceManager.newQuery(runtime).execute();
+			List<T> list = (List<T>) persistenceManager.newQuery(runtime).execute();
+			return new ArrayList<T>(list);
 		} finally {
 			persistenceManager.close();
 		}

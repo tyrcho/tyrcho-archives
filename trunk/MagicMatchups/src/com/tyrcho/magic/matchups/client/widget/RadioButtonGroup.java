@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class RadioButtonGroup<T> extends VerticalPanel implements HasValue<T> {
+public class RadioButtonGroup<T> extends VerticalPanel implements HasValue<T>, HasSetEnabled {
 	Map<RadioButton, T> buttons=new HashMap<RadioButton, T>();
 	
 	public RadioButtonGroup(String name, T[] values) {
@@ -50,5 +50,12 @@ public class RadioButtonGroup<T> extends VerticalPanel implements HasValue<T> {
 			ValueChangeHandler<T> handler) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		for (RadioButton radioButton : buttons.keySet()) {
+			radioButton.setEnabled(enabled);
+		}
 	}
 }
