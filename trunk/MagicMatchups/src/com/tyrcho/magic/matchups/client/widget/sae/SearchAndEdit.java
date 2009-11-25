@@ -2,6 +2,7 @@ package com.tyrcho.magic.matchups.client.widget.sae;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,6 +31,12 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 	private final SAEService<T> service;
 	private List<T> allData;
 	private boolean addMode;
+	private SuccessCallback<Void> dataUpdated = new SuccessCallback<Void>() {
+		@Override
+		public void onSuccess(Void result) {
+			dataUpdated();
+		}
+	};
 
 	public SearchAndEdit(SAEService<T> service, E editor) {
 		this.service = service;
@@ -90,8 +97,9 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 				showSelected();
 			}
 		});
-
 	}
+
+	
 
 	protected void doCancel() {
 		showSelected();
@@ -103,6 +111,7 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 			editor.setEnabled(false);
 			editorHeader.clear();
 			setElementSelected(elements.getSelectedIndex() >= 0);
+			editorHeader.add(add);
 			editorHeader.add(edit);
 			editorHeader.add(delete);
 		} else {
@@ -114,12 +123,6 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 	}
 
 	protected void doSave() {
-		SuccessCallback<Void> dataUpdated = new SuccessCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {
-				dataUpdated();
-			}
-		};
 		if (addMode) {
 			service.add(editor.getValue(), CallbackFactory.buildDefault("add",
 					dataUpdated));
@@ -131,8 +134,7 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 
 	protected void doDelete() {
 		service.delete(editor.getValue(), CallbackFactory
-				.buildDefault("delete"));
-		dataUpdated();
+				.buildDefault("delete", dataUpdated));
 	}
 
 	protected void doEdit() {
@@ -146,10 +148,10 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 	}
 
 	private void initComponents() {
-		HorizontalPanel top = new HorizontalPanel();
-		top.add(search);
-		top.add(add);
-		add(top, DockPanel.NORTH);
+//		HorizontalPanel top = new HorizontalPanel();
+////		top.add(search);
+//		top.add(add);
+//		add(top, DockPanel.NORTH);
 		HorizontalPanel center = new HorizontalPanel();
 		center.add(elements);
 		VerticalPanel editorPanel = new VerticalPanel();
@@ -173,6 +175,7 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 	}
 
 	private void setElementSelected(boolean selected) {
+		add.setEnabled(selected);
 		edit.setEnabled(selected);
 		delete.setEnabled(selected);
 	}

@@ -32,10 +32,10 @@ public class EventEditPanel extends
 
 		private static Map<String, HasValue<?>> buildEditors() {
 			LinkedHashMap<String, HasValue<?>> map = new LinkedHashMap<String, HasValue<?>>();
+			map.put(LABEL_NAME, new TextBox());
 			map.put(LABEL_DATE, new DateBox(new DatePicker(), null,
 					new DateBox.DefaultFormat(DateTimeFormat
 							.getFormat("dd/MM/yy"))));
-			map.put(LABEL_NAME, new TextBox());
 			map.put(LABEL_LEVEL, new RadioButtonGroup<EventLevel>(LABEL_LEVEL,
 					EventLevel.values()));
 			return map;
