@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,6 +15,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -26,9 +28,12 @@ import com.tyrcho.magic.matchups.client.callback.SuccessCallback;
 import com.tyrcho.magic.matchups.client.editor.EventEditPanel;
 import com.tyrcho.magic.matchups.client.editor.EventsList;
 import com.tyrcho.magic.matchups.client.model.Event;
+import com.tyrcho.magic.matchups.client.model.LoginInfo;
 import com.tyrcho.magic.matchups.client.service.DeckNamesService;
 import com.tyrcho.magic.matchups.client.service.DeckNamesServiceAsync;
 import com.tyrcho.magic.matchups.client.service.EventService;
+import com.tyrcho.magic.matchups.client.service.LoginService;
+import com.tyrcho.magic.matchups.client.service.LoginServiceAsync;
 import com.tyrcho.magic.matchups.client.service.ServiceFactory;
 import com.tyrcho.magic.matchups.client.widget.sae.SAEService;
 import com.tyrcho.magic.matchups.client.widget.sae.SearchAndEdit;
@@ -52,11 +57,50 @@ public class MagicMatchups implements EntryPoint {
 	private TextBox deckName = new TextBox();
 	private EventsList eventsList = new EventsList();
 
+	private LoginInfo loginInfo = null;
+	private VerticalPanel loginPanel = new VerticalPanel();
+	private Label loginLabel = new Label(
+			"Please sign in to your Google Account to access the application.");
+	private Anchor signInLink = new Anchor("Sign In");
+	private Anchor signOutLink = new Anchor("Sign Out");
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		LoginServiceAsync loginService = GWT.create(LoginService.class);
+		loginService.login(GWT.getHostPageBaseURL(),
+				new AsyncCallback<LoginInfo>() {
+					public void onFailure(Throwable error) {
+					}
+
+					public void onSuccess(LoginInfo result) {
+						loginInfo = result;
+						if (loginInfo.isLoggedIn()) {
+							loadApplication();
+						} else {
+							loadLogin();
+						}
+					}
+				});
+	}
+
+	private void loadLogin() {
+		// Assemble login panel.
+		signInLink.setHref(loginInfo.getLoginUrl());
+		loginPanel.add(loginLabel);
+		loginPanel.add(signInLink);
+		RootPanel.get().add(loginPanel);
+	}
+
+	protected void loadApplication() {
 		VerticalPanel verticalPanel = new VerticalPanel();
+		HorizontalPanel logoutPanel=new HorizontalPanel();
+		logoutPanel.add(new Label("Welcome, "+loginInfo.getNickname()));
+		signOutLink.setHref(loginInfo.getLogoutUrl());
+		logoutPanel.add(new Label(" "));
+		logoutPanel.add(signOutLink);
+		verticalPanel.add(logoutPanel);
 		verticalPanel.add(new MenuBar());
 		verticalPanel.add(matchups);
 		HorizontalPanel hPanel = new HorizontalPanel();
@@ -65,8 +109,10 @@ public class MagicMatchups implements EntryPoint {
 		hPanel.add(addDeck);
 		verticalPanel.add(hPanel);
 		verticalPanel.add(save);
-		SAEService<Event> eventService = ServiceFactory.create(EventService.class);
-		verticalPanel.add(new SearchAndEdit<Event, EventEditPanel>(eventService, new EventEditPanel()));
+		SAEService<Event> eventService = ServiceFactory
+				.create(EventService.class);
+		verticalPanel.add(new SearchAndEdit<Event, EventEditPanel>(
+				eventService, new EventEditPanel()));
 		RootPanel.get().add(verticalPanel);
 		resetDeckName();
 		registerHandlers();
