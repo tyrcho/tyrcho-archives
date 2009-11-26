@@ -34,7 +34,6 @@ import com.tyrcho.magic.matchups.client.service.DeckNamesServiceAsync;
 import com.tyrcho.magic.matchups.client.service.EventService;
 import com.tyrcho.magic.matchups.client.service.LoginService;
 import com.tyrcho.magic.matchups.client.service.LoginServiceAsync;
-import com.tyrcho.magic.matchups.client.service.ServiceFactory;
 import com.tyrcho.magic.matchups.client.widget.sae.SAEService;
 import com.tyrcho.magic.matchups.client.widget.sae.SearchAndEdit;
 
@@ -47,8 +46,7 @@ public class MagicMatchups implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final DeckNamesServiceAsync deckNamesService = ServiceFactory
-			.create(DeckNamesService.class);
+	private final DeckNamesServiceAsync deckNamesService = GWT.create(DeckNamesService.class);
 
 	private FlexTable matchups = new FlexTable();
 	private List<String> decks = new ArrayList<String>();
@@ -109,8 +107,7 @@ public class MagicMatchups implements EntryPoint {
 		hPanel.add(addDeck);
 		verticalPanel.add(hPanel);
 		verticalPanel.add(save);
-		SAEService<Event> eventService = ServiceFactory
-				.create(EventService.class);
+		SAEService<Event> eventService = GWT.create(EventService.class);
 		verticalPanel.add(new SearchAndEdit<Event, EventEditPanel>(
 				eventService, new EventEditPanel()));
 		RootPanel.get().add(verticalPanel);
