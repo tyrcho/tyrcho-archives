@@ -114,6 +114,7 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 			editorHeader.add(add);
 			editorHeader.add(edit);
 			editorHeader.add(delete);
+			add.setEnabled(true);
 		} else {
 			editor.setEnabled(true);
 			editorHeader.clear();

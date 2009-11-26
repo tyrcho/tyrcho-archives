@@ -14,11 +14,22 @@ import com.tyrcho.magic.matchups.client.model.EventLevel;
 import com.tyrcho.magic.matchups.client.widget.GridEditors;
 import com.tyrcho.magic.matchups.client.widget.RadioButtonGroup;
 import com.tyrcho.magic.matchups.client.widget.sae.AbstractEditor;
+import com.tyrcho.magic.matchups.client.widget.sae.Lazy;
 
 public class EventEditPanel extends
 		AbstractEditor<Event, EventEditPanel.EventEditPanelWidget> {
 	public EventEditPanel() {
-		super(EventEditPanelWidget.class, Event.class);
+		super(new Lazy<EventEditPanelWidget>() {
+			@Override
+			public EventEditPanelWidget build() {
+				return new EventEditPanelWidget();
+			}
+		}, new Lazy<Event>() {
+			@Override
+			public Event build() {
+				return new Event();
+			}
+		});
 	}
 
 	private static final String LABEL_DATE = "Date";
@@ -65,8 +76,7 @@ public class EventEditPanel extends
 	@Override
 	public void clear() {
 		getWidget().clear();
-		
-	}
 
+	}
 
 }

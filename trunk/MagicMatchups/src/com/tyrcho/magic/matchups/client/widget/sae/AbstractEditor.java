@@ -1,6 +1,5 @@
 package com.tyrcho.magic.matchups.client.widget.sae;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -10,22 +9,22 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class AbstractEditor<T,W extends Widget> implements Editor<T> {
 	private T data;
+	private final Lazy<W> widgetBuilder;
+	private final Lazy<T> emptyElementBuilder;
 	private W widget;
-	private final Class<W> widgetClass;
-	private final Class<T> elementClass;
 
-	public AbstractEditor(Class<W> widgetClass, Class<T> elementClass) {
-		this.widgetClass = widgetClass;
-		this.elementClass = elementClass;
-		widget=buildWidget();
+	public AbstractEditor(Lazy<W> widgetBuilder, Lazy<T> emptyElementBuilder) {
+		this.widgetBuilder = widgetBuilder;
+		this.emptyElementBuilder = emptyElementBuilder;
 	}
 	
 	public T getData() {
 		return data;
 	}
 
-	protected W buildWidget() {
-		return GWT.create(widgetClass);
+	public W getWidget() {
+		if(widget==null) { widget=widgetBuilder.build();}
+		return widget;
 	}
 
 	public T getValue() {
@@ -54,13 +53,8 @@ public abstract class AbstractEditor<T,W extends Widget> implements Editor<T> {
 
 	
 	@Override
-	public W getWidget() {
-		return widget;
-	}
-	
-	@Override
 	public void createEmpty() {
-		setValue((T) GWT.create(elementClass));
+		setValue(emptyElementBuilder.build());
 	}
 
 }
