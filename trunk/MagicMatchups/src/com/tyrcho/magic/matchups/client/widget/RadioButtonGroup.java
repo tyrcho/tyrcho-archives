@@ -5,6 +5,7 @@ package com.tyrcho.magic.matchups.client.widget;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -35,8 +36,9 @@ public class RadioButtonGroup<T> extends VerticalPanel implements HasValue<T>, H
 
 	@Override
 	public void setValue(T value) {
-		// TODO Auto-generated method stub
-		
+		for (Entry<RadioButton, T> entry : buttons.entrySet()) {
+			entry.getKey().setValue(entry.getValue().equals(value)); 
+		}
 	}
 
 	@Override

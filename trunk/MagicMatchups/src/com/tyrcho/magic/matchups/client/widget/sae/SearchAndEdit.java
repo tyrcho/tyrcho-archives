@@ -19,8 +19,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tyrcho.magic.matchups.client.callback.CallbackFactory;
 import com.tyrcho.magic.matchups.client.callback.SuccessCallback;
+import com.tyrcho.magic.matchups.client.model.Result;
 
-public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements HasChangeHandlers {
+public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
+		HasChangeHandlers {
 	private TextBox search = new TextBox();
 	private Button add = new Button("New");
 	private Button edit = new Button("Edit");
@@ -101,8 +103,6 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements 
 		});
 	}
 
-	
-
 	protected void doCancel() {
 		showSelected();
 		setReadOnlyMode(true);
@@ -136,8 +136,8 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements 
 	}
 
 	protected void doDelete() {
-		service.delete(editor.getValue(), CallbackFactory
-				.buildDefault("delete", dataUpdated));
+		service.delete(editor.getValue(), CallbackFactory.buildDefault(
+				"delete", dataUpdated));
 	}
 
 	protected void doEdit() {
@@ -151,10 +151,10 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements 
 	}
 
 	private void initComponents() {
-//		HorizontalPanel top = new HorizontalPanel();
-////		top.add(search);
-//		top.add(add);
-//		add(top, DockPanel.NORTH);
+		// HorizontalPanel top = new HorizontalPanel();
+		// // top.add(search);
+		// top.add(add);
+		// add(top, DockPanel.NORTH);
 		HorizontalPanel center = new HorizontalPanel();
 		center.add(elements);
 		VerticalPanel editorPanel = new VerticalPanel();
@@ -167,10 +167,10 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements 
 	}
 
 	protected void showSelected() {
-		int selectedIndex = elements.getSelectedIndex();
-		boolean hasSelection = selectedIndex >= 0;
-		if (hasSelection) {
-			editor.setValue(allData.get(selectedIndex));
+		T selected = getSelected();
+		boolean hasSelection = selected != null;
+		if (selected != null) {
+			editor.setValue(selected);
 		} else {
 			editor.clear();
 		}
@@ -192,5 +192,15 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements 
 	@Override
 	public HandlerRegistration addChangeHandler(ChangeHandler handler) {
 		return elements.addChangeHandler(handler);
+	}
+
+	public T getSelected() {
+		int selectedIndex = elements.getSelectedIndex();
+		boolean hasSelection = selectedIndex >= 0;
+		return hasSelection ? allData.get(selectedIndex) : null;
+	}
+
+	public E getEditor() {
+		return editor;
 	}
 }

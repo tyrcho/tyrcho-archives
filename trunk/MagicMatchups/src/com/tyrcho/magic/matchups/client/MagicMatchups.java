@@ -2,6 +2,8 @@ package com.tyrcho.magic.matchups.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -70,12 +72,22 @@ public class MagicMatchups implements EntryPoint {
 		logoutPanel.add(signOutLink);
 		verticalPanel.add(logoutPanel);
 		AsyncSAEService<Event> eventService = GWT.create(EventService.class);
-		verticalPanel.add(new SearchAndEdit<Event, EventEditPanel>(
-				eventService, new EventEditPanel()));
+		final SearchAndEdit<Event, EventEditPanel> eventSAE = new SearchAndEdit<Event, EventEditPanel>(
+				eventService, new EventEditPanel());
+		verticalPanel.add(eventSAE);
 		AsyncSAEService<Result> resultService = GWT.create(ResultService.class);
-		verticalPanel.add(new SearchAndEdit<Result, ResultEditPanel>(
-				resultService, new ResultEditPanel()));
+		final SearchAndEdit<Result, ResultEditPanel> resultSAE = new SearchAndEdit<Result, ResultEditPanel>(
+				resultService, new ResultEditPanel());
+		verticalPanel.add(resultSAE);
+		eventSAE.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				resultSAE.getEditor().setEvent(eventSAE.getSelected());
+			}
+		});
+		//TODO : comment ne chercher que les résultats de l'event courant ?
 		RootPanel.get().add(verticalPanel);
+		
 	
 	}
 
