@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasValue;
@@ -45,10 +46,14 @@ public class GridEditors extends Grid {
 
 	public void clear() {
 		for (Object editor : editors.values()) {
-			((HasValue<Object>) editor).setValue(null);
+			if (editor instanceof CheckBox) {
+				((CheckBox) editor).setValue(false);
+			} else {
+				((HasValue<Object>) editor).setValue(null);
+			}
 		}
 	}
-	
+
 	public void setValue(String key, Object value) {
 		((HasValue<Object>) editors.get(key)).setValue(value);
 	}
@@ -60,9 +65,9 @@ public class GridEditors extends Grid {
 			} else if (editor instanceof DateBox) {
 				((DateBox) editor).getTextBox().setEnabled(enabled);
 			} else {
-				((HasSetEnabled)editor).setEnabled(enabled);
-//				throw new RuntimeException("bug : cannot enable "
-//						+ editor.getClass());
+				((HasSetEnabled) editor).setEnabled(enabled);
+				// throw new RuntimeException("bug : cannot enable "
+				// + editor.getClass());
 			}
 		}
 

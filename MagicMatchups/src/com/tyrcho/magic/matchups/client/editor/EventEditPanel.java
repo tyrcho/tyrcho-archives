@@ -18,29 +18,8 @@ import com.tyrcho.magic.matchups.client.widget.sae.Lazy;
 
 public class EventEditPanel extends
 		AbstractEditor<Event, EventEditPanel.EventEditPanelWidget> {
-	public EventEditPanel() {
-		super(new Lazy<EventEditPanelWidget>() {
-			@Override
-			public EventEditPanelWidget build() {
-				return new EventEditPanelWidget();
-			}
-		}, new Lazy<Event>() {
-			@Override
-			public Event build() {
-				return new Event();
-			}
-		});
-	}
-
-	private static final String LABEL_DATE = "Date";
-	private static final String LABEL_NAME = "Name";
-	private static final String LABEL_LEVEL = "Level";
 
 	public static class EventEditPanelWidget extends GridEditors {
-		public EventEditPanelWidget() {
-			super(buildEditors());
-		}
-
 		private static Map<String, HasValue<?>> buildEditors() {
 			LinkedHashMap<String, HasValue<?>> map = new LinkedHashMap<String, HasValue<?>>();
 			map.put(LABEL_NAME, new TextBox());
@@ -51,6 +30,35 @@ public class EventEditPanel extends
 					EventLevel.values()));
 			return map;
 		}
+
+		public EventEditPanelWidget() {
+			super(buildEditors());
+		}
+	}
+	private static final String LABEL_DATE = "Date";
+	private static final String LABEL_NAME = "Name";
+
+	private static final String LABEL_LEVEL = "Level";
+
+	@Override
+	protected Event buildEmptyElement() {
+		return new Event();
+	}
+
+	@Override
+	protected EventEditPanelWidget buildWidget() {
+		return new EventEditPanelWidget();
+	}
+
+	@Override
+	public void clear() {
+		getWidget().clear();
+
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		getWidget().setEnabled(enabled);
 	}
 
 	@Override
@@ -65,17 +73,6 @@ public class EventEditPanel extends
 		getData().setDate((Date) getWidget().getValue(LABEL_DATE));
 		getData().setLevel((EventLevel) getWidget().getValue(LABEL_LEVEL));
 		getData().setName((String) getWidget().getValue(LABEL_NAME));
-
-	}
-
-	@Override
-	public void setEnabled(boolean enabled) {
-		getWidget().setEnabled(enabled);
-	}
-
-	@Override
-	public void clear() {
-		getWidget().clear();
 
 	}
 

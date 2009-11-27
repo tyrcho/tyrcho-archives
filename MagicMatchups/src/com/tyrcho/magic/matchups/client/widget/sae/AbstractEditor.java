@@ -7,29 +7,33 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author mdaviot
  */
-public abstract class AbstractEditor<T,W extends Widget> implements Editor<T> {
+public abstract class AbstractEditor<T, W extends Widget> implements Editor<T> {
 	private T data;
-	private final Lazy<W> widgetBuilder;
-	private final Lazy<T> emptyElementBuilder;
 	private W widget;
 
-	public AbstractEditor(Lazy<W> widgetBuilder, Lazy<T> emptyElementBuilder) {
-		this.widgetBuilder = widgetBuilder;
-		this.emptyElementBuilder = emptyElementBuilder;
-	}
-	
-	public T getData() {
-		return data;
+	protected abstract T buildEmptyElement();
+
+	protected abstract W buildWidget();
+
+	@Override
+	public void createEmpty() {
+		setValue(buildEmptyElement());
 	}
 
-	public W getWidget() {
-		if(widget==null) { widget=widgetBuilder.build();}
-		return widget;
+	public T getData() {
+		return data;
 	}
 
 	public T getValue() {
 		updateValue();
 		return getData();
+	}
+
+	public W getWidget() {
+		if (widget == null) {
+			widget = buildWidget();
+		}
+		return widget;
 	}
 
 	public void setData(T data) {
@@ -50,11 +54,5 @@ public abstract class AbstractEditor<T,W extends Widget> implements Editor<T> {
 	 * Copies displayed field to value.
 	 */
 	protected abstract void updateValue();
-
-	
-	@Override
-	public void createEmpty() {
-		setValue(emptyElementBuilder.build());
-	}
 
 }
