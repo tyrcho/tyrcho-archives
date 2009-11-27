@@ -1,15 +1,12 @@
 package com.tyrcho.magic.matchups.server.dao;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-
-import com.tyrcho.magic.matchups.client.model.Event;
 
 public class SimpleDAO<T> {
 	private final Class<T> runtime;

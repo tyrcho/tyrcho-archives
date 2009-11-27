@@ -8,12 +8,14 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+
 @SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Result implements Serializable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key id;
 
 	@Persistent
 	private Event event;
@@ -40,7 +42,7 @@ public class Result implements Serializable {
 		return event;
 	}
 
-	public Long getId() {
+	public Key getId() {
 		return id;
 	}
 
@@ -68,7 +70,7 @@ public class Result implements Serializable {
 		this.event = event;
 	}
 
-	public void setId(Long id) {
+	public void setId(Key id) {
 		this.id = id;
 	}
 

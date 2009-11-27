@@ -8,12 +8,14 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+
 @SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class MatchResult implements Serializable {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key id;
 
 	@Persistent
 	private boolean deck1WinsBeforeSide;
@@ -30,7 +32,7 @@ public class MatchResult implements Serializable {
 		return deck2WinsAfterSide;
 	}
 
-	public Long getId() {
+	public Key getId() {
 		return id;
 	}
 
@@ -50,7 +52,7 @@ public class MatchResult implements Serializable {
 		this.deck2WinsAfterSide = deck2WinsAfterSide;
 	}
 
-	public void setId(Long id) {
+	public void setId(Key id) {
 		this.id = id;
 	}
 }
