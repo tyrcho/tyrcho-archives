@@ -7,6 +7,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasChangeHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -18,7 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tyrcho.magic.matchups.client.callback.CallbackFactory;
 import com.tyrcho.magic.matchups.client.callback.SuccessCallback;
 
-public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
+public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements HasChangeHandlers {
 	private TextBox search = new TextBox();
 	private Button add = new Button("New");
 	private Button edit = new Button("Edit");
@@ -28,7 +30,7 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 	private ListBox elements = new ListBox(true);
 	private E editor;
 	private HorizontalPanel editorHeader = new HorizontalPanel();
-	private final SAEService<T> service;
+	private final AsyncSAEService<T> service;
 	private List<T> allData;
 	private boolean addMode;
 	private SuccessCallback<Void> dataUpdated = new SuccessCallback<Void>() {
@@ -38,7 +40,7 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 		}
 	};
 
-	public SearchAndEdit(SAEService<T> service, E editor) {
+	public SearchAndEdit(AsyncSAEService<T> service, E editor) {
 		this.service = service;
 		this.editor = editor;
 		initComponents();
@@ -185,5 +187,10 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel {
 		initData();
 		addMode = false;
 		setReadOnlyMode(true);
+	}
+
+	@Override
+	public HandlerRegistration addChangeHandler(ChangeHandler handler) {
+		return elements.addChangeHandler(handler);
 	}
 }

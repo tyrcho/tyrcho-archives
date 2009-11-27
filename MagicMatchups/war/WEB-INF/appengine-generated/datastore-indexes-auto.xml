@@ -1,4 +1,11 @@
-<!-- Indices written at Wed, 25 Nov 2009 22:47:55 UTC -->
+<!-- Indices written at Fri, 27 Nov 2009 22:07:33 UTC -->
 
-<datastore-indexes/>
+<datastore-indexes>
 
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="Event" ancestor="true" source="auto"/>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="MatchResult" ancestor="true" source="auto"/>
+
+</datastore-indexes>
