@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--  see http://fredsa.allen-sauer.com/2009/04/1st-look-at-app-engine-using-jdo.html -->
-<module>
-  <super-source path="translatable" />
-</module>
