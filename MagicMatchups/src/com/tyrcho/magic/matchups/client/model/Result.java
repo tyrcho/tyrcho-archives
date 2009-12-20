@@ -2,20 +2,20 @@ package com.tyrcho.magic.matchups.client.model;
 
 import java.io.Serializable;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
-
 @SuppressWarnings("serial")
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Result implements Serializable {
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
+    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String id;
 
 	@Persistent
 	private Event event;
@@ -42,7 +42,7 @@ public class Result implements Serializable {
 		return event;
 	}
 
-	public Key getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -70,7 +70,7 @@ public class Result implements Serializable {
 		this.event = event;
 	}
 
-	public void setId(Key id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
