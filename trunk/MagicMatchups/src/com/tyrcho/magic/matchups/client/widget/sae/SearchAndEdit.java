@@ -2,24 +2,22 @@ package com.tyrcho.magic.matchups.client.widget.sae;
 
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasChangeHandlers;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.tyrcho.magic.matchups.client.callback.CallbackFactory;
 import com.tyrcho.magic.matchups.client.callback.SuccessCallback;
-import com.tyrcho.magic.matchups.client.model.Result;
 
 public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 		HasChangeHandlers {
@@ -101,6 +99,22 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 				showSelected();
 			}
 		});
+		search.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				doSearch();
+			}
+		});
+	}
+
+	protected void doSearch() {
+		elements.clear();
+		for (T t : allData) {
+			String s = t.toString();
+			if (s.contains(search.getText())) {
+				elements.addItem(s);
+			}
+		}
 	}
 
 	protected void doCancel() {
@@ -156,7 +170,10 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 		// top.add(add);
 		// add(top, DockPanel.NORTH);
 		HorizontalPanel center = new HorizontalPanel();
-		center.add(elements);
+		VerticalPanel leftPanel = new VerticalPanel();
+		leftPanel.add(search);
+		leftPanel.add(elements);
+		center.add(leftPanel);
 		VerticalPanel editorPanel = new VerticalPanel();
 		setReadOnlyMode(true);
 		editorPanel.add(editorHeader);
@@ -164,6 +181,7 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 		center.add(editorPanel);
 		add(center, DockPanel.CENTER);
 		editor.setEnabled(false);
+		search.setVisibleLength(5);
 	}
 
 	protected void showSelected() {
