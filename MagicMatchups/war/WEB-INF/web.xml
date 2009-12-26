@@ -14,6 +14,10 @@
 		<servlet-class>com.tyrcho.magic.matchups.server.service.EventServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>matchupServlet</servlet-name>
+		<servlet-class>com.tyrcho.magic.matchups.server.service.MatchupServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>deckServlet</servlet-name>
 		<servlet-class>com.tyrcho.magic.matchups.server.service.DeckServiceImpl</servlet-class>
 	</servlet>
@@ -32,6 +36,9 @@
 	<servlet-mapping>
 		<servlet-name>eventServlet</servlet-name>
 		<url-pattern>/magicmatchups/service/event</url-pattern>
+	</servlet-mapping><servlet-mapping>
+		<servlet-name>matchupServlet</servlet-name>
+		<url-pattern>/magicmatchups/service/matchup</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>deckServlet</servlet-name>
