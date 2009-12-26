@@ -108,13 +108,21 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 	}
 
 	protected void doSearch() {
+		T selected = getSelected();
 		elements.clear();
+		int i = 0;
 		for (T t : allData) {
 			String s = t.toString();
 			if (s.contains(search.getText())) {
 				elements.addItem(s);
+				boolean equals = t.equals(selected);
+				if (equals) {
+					elements.setSelectedIndex(i);
+				}
+				i++;
 			}
 		}
+		showSelected();
 	}
 
 	protected void doCancel() {
@@ -122,9 +130,10 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 		setReadOnlyMode(true);
 	}
 
-	private void setReadOnlyMode(boolean b) {
-		if (b) {
-			editor.setEnabled(false);
+	private void setReadOnlyMode(boolean readOnly) {
+		editor.setEnabled(!readOnly);
+		elements.setEnabled(readOnly);
+		if (readOnly) {
 			editorHeader.clear();
 			setElementSelected(elements.getSelectedIndex() >= 0);
 			editorHeader.add(add);
@@ -132,7 +141,6 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 			editorHeader.add(delete);
 			add.setEnabled(true);
 		} else {
-			editor.setEnabled(true);
 			editorHeader.clear();
 			editorHeader.add(save);
 			editorHeader.add(cancel);
@@ -186,6 +194,10 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 
 	protected void showSelected() {
 		T selected = getSelected();
+		showSelected(selected);
+	}
+
+	protected void showSelected(T selected) {
 		boolean hasSelection = selected != null;
 		if (selected != null) {
 			editor.setValue(selected);
@@ -215,7 +227,15 @@ public class SearchAndEdit<T, E extends Editor<T>> extends DockPanel implements
 	public T getSelected() {
 		int selectedIndex = elements.getSelectedIndex();
 		boolean hasSelection = selectedIndex >= 0;
-		return hasSelection ? allData.get(selectedIndex) : null;
+		if (hasSelection) {
+			String value = elements.getValue(selectedIndex);
+			for (T element : allData) {
+				if (element.toString().equals(value)) {
+					return element;
+				}
+			}
+		}
+		return null;
 	}
 
 	public E getEditor() {
