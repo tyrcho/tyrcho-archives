@@ -20,35 +20,39 @@ public final class Distance {
 	}
 
 	/**
-	 * Calcule un nouveau point dont les coordonnées sont les moyennes des coordonnées des points.
+	 * Calcule un nouveau point dont les coordonnées sont les moyennes des
+	 * coordonnées des points.
 	 */
-	public static <T extends NamedPoint> NamedPoint computeCentroid(Collection<T> points) {
-		int size = points.iterator().next().getValues().size();
-		List<Double> sumValues = new ArrayList<Double>(Collections.nCopies(
-				size, 0.0));
-		for (T point : points) {
-			Collection<? extends Number> values = point.getValues();
-			int i = 0;
-			for (Number number : values) {
-				sumValues.set(i, sumValues.get(i) + number.doubleValue());
-				i++;
+	public static <T extends NamedPoint> NamedPoint computeCentroid(
+			Collection<T> points) {
+		final Collection<Double> moyenValues = new ArrayList<Double>();
+		if (!points.isEmpty()) {
+			int size = points.iterator().next().getValues().size();
+			List<Double> sumValues = new ArrayList<Double>(Collections.nCopies(
+					size, 0.0));
+			for (T point : points) {
+				Collection<? extends Number> values = point.getValues();
+				int i = 0;
+				for (Number number : values) {
+					sumValues.set(i, sumValues.get(i) + number.doubleValue());
+					i++;
+				}
 			}
-		}
-		final Collection<Double> moyenValues=new ArrayList<Double>();
-		for (Double d : sumValues) {
-			moyenValues.add(d/points.size());
+			for (Double d : sumValues) {
+				moyenValues.add(d / points.size());
+			}
 		}
 		return new NamedPoint() {
 			@Override
 			public Collection<Double> getValues() {
 				return moyenValues;
 			}
-			
+
 			@Override
 			public String getName() {
 				return "centroid";
 			}
-			
+
 			@Override
 			public String toString() {
 				return moyenValues.toString();

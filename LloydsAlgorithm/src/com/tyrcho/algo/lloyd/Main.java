@@ -7,6 +7,11 @@ import java.util.Collection;
 import com.csvreader.CsvReader;
 
 public class Main {
+	private static final int MAX_GROUPS_COUNT = 15;
+	private static final int MIN_GROUPS_COUNT = 10;
+	private static final int MAX_TRIES = 1000;
+	private static final int MAX_ITERATIONS = 50;
+
 	static class Deck implements NamedPoint {
 		private String name;
 
@@ -30,6 +35,7 @@ public class Main {
 		private Collection<Double> values = new ArrayList<Double>();
 	}
 
+
 	public static void main(String[] args) throws IOException {
 		CsvReader csvReader = new CsvReader(args[0], ';');
 		csvReader.readHeaders();
@@ -49,11 +55,11 @@ public class Main {
 		KMeansClustering<Deck> clustering = new KMeansClustering<Deck>(decks);
 		double minDistance = Double.MAX_VALUE;
 		Collection<Collection<Deck>> bestGroups = null;
-		for (int count = 3; count < 10; count++) {
+		for (int count = MIN_GROUPS_COUNT; count < MAX_GROUPS_COUNT; count++) {
 
-			for (int i = 0; i < 1000; i++) {
+			for (int i = 0; i < MAX_TRIES; i++) {
 				Collection<Collection<Deck>> groups = clustering
-						.computeGroups(count);
+						.computeGroups(count, MAX_ITERATIONS);
 				double maxDistance = clustering.computeMaxDistance(groups);
 				if (maxDistance < minDistance) {
 					minDistance = maxDistance;
