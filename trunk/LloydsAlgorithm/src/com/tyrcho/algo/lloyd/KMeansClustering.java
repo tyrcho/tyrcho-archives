@@ -23,15 +23,15 @@ public class KMeansClustering<T extends NamedPoint> {
 		this.points = points;
 	}
 
-	public Collection<Collection<T>> computeGroups(int groupsCount) {
+	public Collection<Collection<T>> computeGroups(int groupsCount, int maxIterations) {
 		if (groupsCount < points.size()) {
 			Collection<Collection<T>> lastGroups = buildInitialGroups(groupsCount);
 			Collection<Collection<T>> groups = lastGroups;
+			int i=0;
 			do {
 				lastGroups = groups;
 				groups = iterate(lastGroups);
-			} while (!areSame(lastGroups, groups));
-
+			} while (!areSame(lastGroups, groups) && i++<maxIterations);
 			return lastGroups;
 		} else {
 			throw new IllegalArgumentException(groupsCount + " > "
