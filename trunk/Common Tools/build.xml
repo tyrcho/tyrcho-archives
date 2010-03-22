@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="common tools" default="make" basedir=".">
+	<property name="build.dir" value="bin" />
+	<property name="target.dir" value="." />
+
+	<property name="lib.dir" value="D:\michel\lib" />
+	<property name="common.tools.jar" value="${lib.dir}\commontools.jar" />
+	<property name="src.dir" value="${basedir}/src" />
+	<path id="classpath">
+		<pathelement path="${classpath}" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+
+
+
+	<!-- =================================================================== -->
+	<!-- Compiles the sources                                                -->
+	<!-- =================================================================== -->
+	<target name="make" description="Compiles the sources">
+		<mkdir dir="${build.dir}" />
+		<javac destdir="${build.dir}" target="1.5" failonerror="false">
+			<src path="${src.dir}" />
+			<include name="**/*.java" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+
+	<!-- =================================================================== -->
+	<!-- Builds the jar file                                                 -->
+	<!-- =================================================================== -->
+	<target name="jar" depends="make" description="Builds the jar file">
+		<jar destfile="${common.tools.jar}">
+			<fileset dir="${build.dir}" />
+		</jar>
+	</target>
+
+</project>
