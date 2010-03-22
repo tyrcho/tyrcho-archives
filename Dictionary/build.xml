@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<project name="dictionary" default="make" basedir=".">
+	<property name="build.dir" value="bin" />
+	<property name="target.dir" value="." />
+	<property name="sign.alias" value="tyrcho" />
+	<property name="sign.password" value="password" />
+
+	<property name="lib.dir" value="D:\michel\lib" />
+	<property name="dictionary.lib.dir" value="${lib.dir}/dictionary" />
+	<property name="target.jar" value="${dictionary.lib.dir}/dictionary.jar" />
+	<property name="common.tools.dir" value="..\Common Tools" />
+	<property name="common.tools.jar" value="${common.tools.dir}\commontools.jar" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="ftp.server" value="tyrcho.com" />
+	<property name="ftp.user" value="tyrcho" />
+	<property name="ftp.password" value="shanty" />
+	<property name="ftp.remote" value="www/dictionary" />
+	<path id="classpath">
+		<pathelement path="${classpath}" />
+		<pathelement path="${common.tools.jar}" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+
+
+
+	<!-- =================================================================== -->
+	<!-- Compiles the sources                                                -->
+	<!-- =================================================================== -->
+	<target name="make" description="Compiles the sources">
+		<ant antfile="${common.tools.dir}/build.xml" target="jar" />
+		<mkdir dir="${build.dir}" />
+		<javac destdir="${build.dir}" target="1.5" failonerror="false">
+			<src path="${src.dir}" />
+			<include name="**/*.java" />
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+
+	<!-- =================================================================== -->
+	<!-- Builds the jar file                                                 -->
+	<!-- =================================================================== -->
+	<target name="jar" depends="make" description="Builds the jar file">
+		<mkdir dir="${dictionary.lib.dir}" />
+		<jar destfile="${target.jar}">
+			<fileset dir="${build.dir}" />
+		</jar>
+	</target>
+
+	<target name="sign" depends="jar" description="sign jars for jnlp">
+		<signjar jar="${target.jar}" alias="${sign.alias}" storepass="${sign.password}" />
+		<signjar jar="${common.tools.jar}" alias="${sign.alias}" storepass="${sign.password}" />
+	<!--
+		<signjar alias="${sign.alias}" storepass="${sign.password}">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</signjar>
+		-->
+	</target>
+
+	<!--
+	C:\dev\workspace\Dictionary>keytool -genkey -alias tyrcho -keypass password
+	Tapez le mot de passe du Keystore :  password
+	Quels sont vos prÚnom et nom ?
+	  [Unknown] :  tyrcho
+	Quel est le nom de votre unitÚ organisationnelle ?
+	  [Unknown] :
+	Quelle est le nom de votre organisation ?
+	  [Unknown] :
+	Quel est le nom de votre ville de rÚsidence ?
+	  [Unknown] :
+	Quel est le nom de votre Útat ou province ?
+	  [Unknown] :
+	Quel est le code de pays Ó deux lettres pour cette unitÚ ?
+	  [Unknown] :
+	Est-ce CN=tyrcho, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown ?
+	  [non] :  o
+-->
+
+	<target name="ftp" depends="sign" description="copies to tyrcho.com">
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="${ftp.remote}">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</ftp>
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="${ftp.remote}">
+			<fileset file="${common.tools.jar}" />
+		</ftp>
+		<ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="${ftp.remote}">
+			<fileset dir=".">
+				<include name="dict.jnlp" />
+			</fileset>
+		</ftp>
+	</target>
+	
+
+</project>
