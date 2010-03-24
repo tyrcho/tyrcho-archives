@@ -21,15 +21,17 @@ public class Utils {
 		}
 		return builder.toString();
 	}
-	
-//	 comparaison sans les caractères ignorés
+
+	// comparaison sans les caractères ignorés
 	public static boolean simpleCompare(String s1, String s2,
 			String ignoredChars) {
 		char[] c1 = s1.toCharArray();
 		char[] c2 = s2.toCharArray();
 		Collection<Character> ignored = new HashSet<Character>();
-		for (Character character : ignoredChars.toCharArray()) {
-			ignored.add(character);
+		if (ignoredChars != null) {
+			for (Character character : ignoredChars.toCharArray()) {
+				ignored.add(character);
+			}
 		}
 		int i = 0;
 		for (char c : c1) {

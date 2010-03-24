@@ -15,42 +15,51 @@ import com.tyrcho.gui.component.JTextField;
 import com.tyrcho.gui.toolkit.RadioButtonGroup;
 
 public class SessionParametersPanel extends JPanel {
-    private static final long serialVersionUID = 7727334170064237821L;
-    private RadioButtonGroup  languageButtonGroup;
-    private JTextField        questionCountField;
-    private JCheckBox         randomCheckBox;
-    private TwoWayDictionary  dictionary;
+	private static final long serialVersionUID = 7727334170064237821L;
+	private RadioButtonGroup languageButtonGroup;
+	private JTextField questionCountField;
+	private JCheckBox randomCheckBox;
+	private TwoWayDictionary dictionary;
+	private static SessionParametersPanel panel;
 
-    public SessionParametersPanel(TwoWayDictionary dictionary) {
-        this.dictionary = dictionary;
-        init();
-    }
+	public SessionParametersPanel(TwoWayDictionary dictionary) {
+		this.dictionary = dictionary;
+		init();
+	}
 
-    private void init() {
-        setLayout(new BorderLayout());
-        Map<String, Boolean> languages = new HashMap<String, Boolean>();
-        languages.put(dictionary.getFirstLanguage(), true);
-        languages.put(dictionary.getSecondLanguage(), false);
-        languageButtonGroup = new RadioButtonGroup(RadioButtonGroup.VERTICAL, languages);
-        languageButtonGroup.setCurrentValue(Boolean.FALSE);
-        add(languageButtonGroup, BorderLayout.NORTH);
-        questionCountField = new JTextField("10");
-        add(questionCountField, BorderLayout.SOUTH);
-        randomCheckBox=new JCheckBox("Aléatoire", false);
-        add (randomCheckBox, BorderLayout.CENTER);
-    }
+	private void init() {
+		setLayout(new BorderLayout());
+		Map<String, Boolean> languages = new HashMap<String, Boolean>();
+		languages.put(dictionary.getFirstLanguage(), true);
+		languages.put(dictionary.getSecondLanguage(), false);
+		languageButtonGroup = new RadioButtonGroup(RadioButtonGroup.VERTICAL,
+				languages);
+		languageButtonGroup.setCurrentValue(Boolean.FALSE);
+		add(languageButtonGroup, BorderLayout.NORTH);
+		questionCountField = new JTextField("10");
+		add(questionCountField, BorderLayout.SOUTH);
+		randomCheckBox = new JCheckBox("Aléatoire", false);
+		add(randomCheckBox, BorderLayout.CENTER);
+	}
 
-    public SessionParameters getSessionParameters() {
-        return new SessionParameters(dictionary, ((Boolean) languageButtonGroup.getCurrentValue()).booleanValue(), Integer.parseInt(questionCountField.getText()), randomCheckBox.isSelected());
-    }
+	public SessionParameters getSessionParameters() {
+		return new SessionParameters(dictionary, ((Boolean) languageButtonGroup
+				.getCurrentValue()).booleanValue(), Integer
+				.parseInt(questionCountField.getText()), randomCheckBox
+				.isSelected());
+	}
 
-    public static SessionParameters showSessionParametersDialog(JFrame frame, String title, TwoWayDictionary dictionary) {
-        SessionParametersPanel panel = new SessionParametersPanel(dictionary);
-        int action = JOptionPane.showConfirmDialog(frame, panel, "Paramètres de session", JOptionPane.OK_CANCEL_OPTION);
-        if (action == JOptionPane.OK_OPTION) {
-            return panel.getSessionParameters();
-        } else {
-            return null;
-        }
-    }
+	public static SessionParameters showSessionParametersDialog(JFrame frame,
+			String title, TwoWayDictionary dictionary) {
+		if (panel == null) {
+			panel = new SessionParametersPanel(dictionary);
+		}
+		int action = JOptionPane.showConfirmDialog(frame, panel,
+				"Paramètres de session", JOptionPane.OK_CANCEL_OPTION);
+		if (action == JOptionPane.OK_OPTION) {
+			return panel.getSessionParameters();
+		} else {
+			return null;
+		}
+	}
 }

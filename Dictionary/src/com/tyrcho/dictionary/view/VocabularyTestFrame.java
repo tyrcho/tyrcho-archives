@@ -30,7 +30,7 @@ public class VocabularyTestFrame extends JFrame {
     private Question                      currentQuestion;
     private CommandEventListener          listener      = new CommandEventListener() {
                                                             public void commandPerformed(CommandEvent e) {
-                                                                questionAnswered(e.getText());
+                                                                questionAnswered(e.getText().trim());
                                                             }
                                                         };
     private StringBuffer errors=new StringBuffer();                                                    

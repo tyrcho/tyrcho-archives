@@ -24,6 +24,7 @@ public class Session {
             Collections.shuffle(entries);
         } else {
             entries=new ArrayList<String>(dictEntries);
+            Collections.shuffle(entries);
             int maxAnswers=0;
             for (String string : dictEntries) {
                 DictionaryEntry entry = dictionary.getEntry(string, firstLanguage);
@@ -37,7 +38,7 @@ public class Session {
                     DictionaryEntry entry2 = dictionary.getEntry(s2, firstLanguage);
                     float proportionDifference = entry1.getGoodAnswerProportion()-entry2.getGoodAnswerProportion();
                     float totalAnswersDifference=(entry1.getTotalAnswers()-entry2.getTotalAnswers())/finalMaxAnswers;
-                    float difference=proportionDifference+totalAnswersDifference;
+                    float difference=3*proportionDifference+totalAnswersDifference;
 //                    String message1=s1+ "("+entry1.getGoodAnswers()+"/"+entry1.getTotalAnswers()+")";
 //                    String message2=s2+ "("+entry2.getGoodAnswers()+"/"+entry2.getTotalAnswers()+")";                    
                     if (difference==0) {
