@@ -1,6 +1,5 @@
 package com.tyrcho.dictionary.view;
 
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -26,6 +25,7 @@ import com.tyrcho.gui.field.ITextField;
 import com.tyrcho.util.validation.FailedValidationException;
 import com.tyrcho.util.validation.GroupValidator;
 import com.tyrcho.util.validation.NotEmptyValidator;
+import com.tyrcho.util.validation.PatternValidator;
 
 /**
  * @author  ALEXIS
@@ -56,6 +56,7 @@ public class EntryPanel extends JPanel {
         inputFieldsGroup=new DefaultInputFieldGroup(inputFields);
         fieldsValidator=new GroupValidator();
         fieldsValidator.putValidator(WORD_FIELD, new NotEmptyValidator("Le mot doit être rempli"));
+        fieldsValidator.putValidator(WORD_FIELD, new PatternValidator("[^,]+", "Le mot ne doit pas contenir de virgule", false));
         fieldsValidator.putValidator(TRANSLATIONS_FIELD, new NotEmptyValidator("La traduction doit être remplie"));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(wordLabel);

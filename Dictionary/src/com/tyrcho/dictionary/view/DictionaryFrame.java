@@ -260,15 +260,15 @@ public class DictionaryFrame extends JFrame {
 				}
 				// String otherChangeLanguage= "Autre exercice
 				// ("+(session.isFirstLanguage()?secondLanguageName:firstLanguageName)+")";
-				String[] options = { "Recommencer", "Autre exercice",
-						"Changer de langue ", "Retour" };
+				String[] options = { "Recommencer (mêmes mots)", "Autre exercice",
+						"Changer de langue ", "Retour" , "Même type d'exercice" };
 				String message = "Votre score est de " + score + ".\n "
 						+ frame.getErrors() + "\nEt maintenant ?";
 				int choice = JOptionPane
 						.showOptionDialog(frame, message, "Session terminée",
 								JOptionPane.CANCEL_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options,
-								options[1]);
+								options[4]);
 				frame.dispose();
 				switch (choice) {
 				case 3:
@@ -283,6 +283,11 @@ public class DictionaryFrame extends JFrame {
 					break;
 				case 2:
 					session.switchLanguage();
+					session.resetScore();
+					runSession(session);
+					break;
+				case 4:
+					session.resetQuestions();
 					session.resetScore();
 					runSession(session);
 					break;
