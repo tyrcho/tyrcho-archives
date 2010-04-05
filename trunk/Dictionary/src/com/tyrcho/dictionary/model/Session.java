@@ -1,145 +1,157 @@
 package com.tyrcho.dictionary.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public class Session {
-    private int score;
-    private int questionCount;
-    private boolean firstLanguage;
-    private TwoWayDictionary dictionary;
-    private List<String> entries;
-    private boolean random;
-	private final String ignoredChars;
-    
-    public void resetQuestions() {
-        Set<String> dictEntries = dictionary.getEntries(firstLanguage);            
-        if (random) {
-            entries=new ArrayList<String>(dictEntries);
-            Collections.shuffle(entries);
-        } else {
-            entries=new ArrayList<String>(dictEntries);
-            Collections.shuffle(entries);
-            int maxAnswers=0;
-            for (String string : dictEntries) {
-                DictionaryEntry entry = dictionary.getEntry(string, firstLanguage);
-                int answers=entry.getTotalAnswers();
-                maxAnswers=Math.max(maxAnswers, answers);
-            }
-            final float finalMaxAnswers=maxAnswers;
-            Collections.sort(entries, new Comparator<String>() {
-                public int compare(String s1, String s2) {
-                    DictionaryEntry entry1 = dictionary.getEntry(s1, firstLanguage);
-                    DictionaryEntry entry2 = dictionary.getEntry(s2, firstLanguage);
-                    float proportionDifference = entry1.getGoodAnswerProportion()-entry2.getGoodAnswerProportion();
-                    float totalAnswersDifference=(entry1.getTotalAnswers()-entry2.getTotalAnswers())/finalMaxAnswers;
-                    float difference=3*proportionDifference+totalAnswersDifference;
-//                    String message1=s1+ "("+entry1.getGoodAnswers()+"/"+entry1.getTotalAnswers()+")";
-//                    String message2=s2+ "("+entry2.getGoodAnswers()+"/"+entry2.getTotalAnswers()+")";                    
-                    if (difference==0) {
-                        //System.out.println(message1+" egal "+message2);
-                        return 0;
-                    } else if (difference>0) {
-                        //System.out.println(message1+" apres "+message2);
-                        return 1;
-                    } else {
-                        //System.out.println(message1+" avant "+message2);
-                        return -1;
-                    }
-                }
-            });
-        }
-        
-        score = 0;
-        int entriesCount = entries.size();
-        if (entriesCount <= questionCount)  {
-            this.questionCount=entriesCount;
-        } else {
-            Collections.reverse(entries);
-            Iterator<String> i = entries.iterator();
-            while (entries.size()>questionCount) {
-                i.next();
-                i.remove();
-            }
-            Collections.reverse(entries);
-        }
-    }
-    
-    public Session(SessionParameters parameters) {
-        this(parameters.getDictionary(), parameters.isFirstLanguage(), parameters.getQuestionCount(), parameters.isRandom(), parameters.getIgnoredChars());
-    }
-    
-    public Session(final TwoWayDictionary dictionary, final boolean firstLanguage,int questionCount, boolean random, String ignoredChars){
-        this.questionCount = questionCount;
-        this.firstLanguage = firstLanguage;
-        this.dictionary = dictionary;
-        this.random=random;
-		this.ignoredChars = ignoredChars;
-        resetQuestions();
-    }
-    
-    public void switchLanguage() {
-        Set<String> newEntries = new HashSet<String>();
-        for (String word : entries) {
-            newEntries.addAll(dictionary.getEntry(word, firstLanguage).getTranslations());         
-        }
-        entries=new ArrayList<String>(newEntries);
-        Collections.shuffle(entries);
-        questionCount=entries.size();
-        firstLanguage=!firstLanguage;
-    }
-    
-    //Mise à jour du score de la session
-    public void updateScore(){
-        score = score + 1;
-    }
-    
-    public void resetScore() {
-        score=0;
-    }
-    
-    //Récupération du score de la session
-    public String getScore(){
-        return score + "/" + questionCount;
-    }
-    
-    //Récupération de l'itérateur de la session
-    public Iterator<Question> iterator(){
-        return new SessionIterator();
-    }
+	private int score;
+	private int questionCount;
+	private final SessionParameters parameters;
+	private List<String> entries;
 
-    class SessionIterator implements Iterator<Question> {
-        private Iterator<String> iterator;
-        
-        SessionIterator() {
-            iterator=entries.iterator();
-        }
+	public void resetQuestions() {
+		Set<String> dictEntries = parameters.getDictionary().getEntries(
+				parameters.isFirstLanguage());
+		questionCount = Math.min(dictEntries.size(), parameters.getQuestionCount());
+		entries = new ArrayList<String>(questionCount);
+		List<String> random = new ArrayList<String>(dictEntries);
+		Collections.shuffle(random);
+		List<String> recent = new ArrayList<String>(dictEntries);
+		Collections.sort(recent, buildRecentComparator());
+		List<String> badRatio = new ArrayList<String>(dictEntries);
+		Collections.sort(badRatio, buildBadRatioComparator());
+		List<List<String>> possibleLists = Arrays.asList(random, recent,
+				badRatio);
+		Random rand = new Random();
+		for (int i = 0; i < questionCount; i++) {
+			int r = rand.nextInt(100);
+			List<String> list;
+			if (r < parameters.getRecentPercent()) {
+				list = recent;
+			} else if (r < parameters.getRecentPercent() + parameters.getBadPercent()) {
+				list = badRatio;
+			} else {
+				list = random;
+			}
+			addEntry(entries, list);
+		}
 
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
+		score = 0;
+		int entriesCount = entries.size();
+		if (entriesCount <= questionCount) {
+			this.questionCount = entriesCount;
+		} else {
+			Collections.reverse(entries);
+			Iterator<String> i = entries.iterator();
+			while (entries.size() > questionCount) {
+				i.next();
+				i.remove();
+			}
+			Collections.reverse(entries);
+		}
+	}
 
-        public Question next() {
-            String word=iterator.next();
-            return new Question(word,dictionary.getEntry(word, firstLanguage), ignoredChars);
-        }
+	private void addEntry(List<String> entries, List<String> list) {
+		String s = list.get(0);
+		while (entries.contains(s)) {
+			list.remove(0);
+			s = list.get(0);
+		}
+		entries.add(s);
+	}
 
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-        
-    }
+	public Comparator<String> buildRecentComparator() {
+		return new Comparator<String>() {
+			public int compare(String s1, String s2) {
+				DictionaryEntry entry1 = parameters.getDictionary().getEntry(
+						s1, parameters.isFirstLanguage());
+				DictionaryEntry entry2 = parameters.getDictionary().getEntry(
+						s2, parameters.isFirstLanguage());
+				return entry1.getTotalAnswers() - entry2.getTotalAnswers();
+			}
+		};
+	}
 
-    public boolean isFirstLanguage() {
-        return firstLanguage;
-    }
+	public Comparator<String> buildBadRatioComparator() {
+		return new Comparator<String>() {
+			public int compare(String s1, String s2) {
+				DictionaryEntry entry1 = parameters.getDictionary().getEntry(
+						s1, parameters.isFirstLanguage());
+				DictionaryEntry entry2 = parameters.getDictionary().getEntry(
+						s2, parameters.isFirstLanguage());
+				float ratio1 = entry1.getGoodAnswerProportion();
+				float ratio2 = entry2.getGoodAnswerProportion();
+				float ratioDifference = ratio1 - ratio2;
+				return ratioDifference > 0 ? 1 : ratioDifference == 0 ? 0 : -1;
+			}
+		};
+	}
 
-    public void setFirstLanguage(boolean firstLanguage) {
-        this.firstLanguage = firstLanguage;
-    }
+	public Session(SessionParameters parameters) {
+		this.parameters = parameters;
+		resetQuestions();
+	}
+
+	public void switchLanguage() {
+		Set<String> newEntries = new HashSet<String>();
+		for (String word : entries) {
+			newEntries.addAll(parameters.getDictionary().getEntry(word,
+					parameters.isFirstLanguage()).getTranslations());
+		}
+		entries = new ArrayList<String>(newEntries);
+		Collections.shuffle(entries);
+		questionCount = entries.size();
+		parameters.setFirstLanguage(!parameters.isFirstLanguage());
+	}
+
+	// Mise à jour du score de la session
+	public void updateScore() {
+		score = score + 1;
+	}
+
+	public void resetScore() {
+		score = 0;
+	}
+
+	// Récupération du score de la session
+	public String getScore() {
+		return score + "/" + questionCount;
+	}
+
+	// Récupération de l'itérateur de la session
+	public Iterator<Question> iterator() {
+		return new SessionIterator();
+	}
+
+	class SessionIterator implements Iterator<Question> {
+		private Iterator<String> iterator;
+
+		SessionIterator() {
+			iterator = entries.iterator();
+		}
+
+		public boolean hasNext() {
+			return iterator.hasNext();
+		}
+
+		public Question next() {
+			String word = iterator.next();
+			return new Question(word, parameters.getDictionary().getEntry(word,
+					parameters.isFirstLanguage()), parameters.getIgnoredChars());
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+	}
+
 }
