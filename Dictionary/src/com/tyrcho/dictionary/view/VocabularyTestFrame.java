@@ -14,15 +14,12 @@ import com.tyrcho.dictionary.model.Question;
 import com.tyrcho.dictionary.model.Session;
 import com.tyrcho.dictionary.model.SessionCompleteEvent;
 import com.tyrcho.dictionary.model.SessionCompleteListener;
-import com.tyrcho.dictionary.model.factory.XstreamDictionaryFactory;
 import com.tyrcho.gui.component.console.CommandEvent;
 import com.tyrcho.gui.component.console.CommandEventListener;
 import com.tyrcho.gui.component.console.ConsolePanel;
 
 @SuppressWarnings("serial")
 public class VocabularyTestFrame extends JFrame {
-    private static final int              questionCount = 10;
-    private static final boolean          firstLanguage = true;
     private ConsolePanel                  console;
     private List<SessionCompleteListener> listeners     = new LinkedList<SessionCompleteListener>();
     private Session                       session;
@@ -115,20 +112,5 @@ public class VocabularyTestFrame extends JFrame {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        // Création d'une nouvelle session
-        final String fileName      = "D:/-= DOCUMENTS =-/dictionnaire.dict";
-        XstreamDictionaryFactory factory = new XstreamDictionaryFactory();
-        factory.setFileName(fileName);
-		final Session session = new Session(factory.load(), firstLanguage, questionCount, true, "");
-        final VocabularyTestFrame frame = new VocabularyTestFrame("Test", session);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.runSession();
-        frame.addSessionCompleteListener(new SessionCompleteListener() {
-            public void sessionComplete(SessionCompleteEvent e) {
-                System.out.println("Score total : " + session.getScore());
-                frame.dispose();
-            }
-        });
-    }
+   
 }

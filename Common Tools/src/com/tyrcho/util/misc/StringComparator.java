@@ -14,36 +14,23 @@ public class StringComparator implements Comparator<String> {
 	}
 
 	public int compare(String o1, String o2) {
-		int len1 = 0;
-		int len2 = 0;
-		char v1[] = new char[o1.length()];
-		char v2[] = new char[o2.length()];
-		for (char c1 : o1.toCharArray()) {
-			if (languageOrder.indexOf(c1) >= 0) {
-				v1[len1++] = c1;
-			}
-		}
-		for (char c2 : o2.toCharArray()) {
-			if (languageOrder.indexOf(c2) >= 0) {
-				v2[len2++] = c2;
-			}
-		}
-		int k = 0;
-		int n = Math.min(len1, len2);
-		while (k < n) {
-			char c1 = v1[k];
-			char c2 = v2[k];
-			if (c1 != c2) {
-				int i1 = languageOrder.indexOf(c1);
-				int i2 = languageOrder.indexOf(c2);
-				if (i1 >= 0 && i2 >= 0) {
+		int m = Math.min(o1.length(), o2.length());
+		for (int i = 0; i < m; i++) {
+			char c1 = o1.charAt(i);
+			char c2 = o2.charAt(i);
+			int i1 = languageOrder.indexOf(c1);
+			int i2 = languageOrder.indexOf(c2);
+			if (i1 >= 0 && i2 >= 0) {//both in language
+				if (i1 != i2) {
 					return i1 - i2;
 				}
-				return c1 - c2;
-			}
-			k++;
+			} else if (i1<0 && i2 <0) {//none in language
+				if (c1!=c2) { return c1-c2;}
+			} else {
+				return i1>0 ? -1 : 1; //language comes first
+			}			
 		}
-		return len1 - len2;
+		return o1.length()-o2.length(); // short string first	
 	}
 
 }
